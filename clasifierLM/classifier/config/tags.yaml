@@ -1,0 +1,304 @@
+# DRAFT expanded tag vocabulary: 100 themes (11 families) + 100 images.
+# How built: the original 10+10 entries are kept verbatim (families added). The new entries come from
+# themes/images that recur in Kabir's sakhis, shabads and ramainis (julaha/weaver, potter, miller, goldsmith
+# imagery; swan/crow/cuckoo/musk-deer; dew, lamp, mirror, well) and the wider sant tradition (Nanak, Ravidas,
+# Dadu, Tulsi, Mira). Each theme desc says what separates it from its nearest neighbour. Ids are lowercase a-z
+# only. Image ids/names were checked so that none is also a theme concept.
+#
+# REVIEW: near-synonym theme pairs (classifier confusion risk)
+#  mrityu / kaal         : death as an event vs Time personified as the devourer ("kaal khaye jag")  -> maybe merge
+#  mrityu / chetavani    : death itself vs the warning "wake up before it is too late"
+#  kshanik / jagmela     : things perish vs the world as a brief fair/inn you only visit
+#  khalihath / vairagya  : you leave empty-handed at death vs deliberate detachment while alive
+#  atma / antarkhoj      : what the true self is vs the act of searching inward, not outside
+#  antarkhoj / bhakti    : the seeker's inward search vs love of God found within  (heavy overlap)
+#  vinay / ahankar       : humility is the opposite pole; a request may mention either
+#  nirmal / snaan        : purity of mind vs the ritual bath that cleans only the body
+#  guru / gurumahima     : the teacher who guides vs praise that guru outranks God
+#  guru / sadhu          : a personal guru vs the worth of any true saint (judge by knowledge, not caste)
+#  shabd / simran        : the guru's Word that pierces vs repeating the divine Name
+#  pakhand / dikhava     : empty ritual in general vs showing off piety to be seen
+#  pakhand / pratima     : general empty ritual vs stone idols specifically
+#  jaat / samata         : caste pride (ritual world) vs equality of all people (society)
+#  vrat / sanyam         : fasting as show vs sane moderation in all things
+#  vani / maun           : speaking sweetly vs the value of staying silent
+#  vani / ninda          : sweet speech vs slander and keeping a critic close
+#  dhairya / lagan      : calm waiting vs tireless persistence
+#  dhairya / abhyas      : waiting for the season vs steady daily practice (drop by drop)
+#  aaj / chetavani       : do it today (procrastination) vs awake to mortality
+#  santosh / fakiri      : contentment with enough vs chosen poverty of the fakir
+#  maya / moh            : the illusory world vs clinging to particular people and things
+#  sampatti / daan       : hoarding wealth vs giving it away
+#  gyan / anubhav        : knowledge vs first-hand experience (aankhin dekhi) -> overlap, keep both
+#  agyan / pothi         : ignorance vs bookish learning without realisation
+#  jagran / chetavani    : spiritual awakening vs wake-up call about death
+#  satya / saar          : truth vs the essence separated from the chaff
+#  shoor / himmat        : steadfast in the inner battle vs daring to dive and seek (new in rev 2)
+#  shunya / vinay        : self fully emptied like a reed flute vs ordinary humility (new in rev 2)
+#
+# Revision 2: merged kshanik+swapna (kept kshanik), ahankar+mainpan (kept ahankar, v1 text), lobh+trishna (kept lobh),
+# sampraday+ekeshwar (kept ekeshwar). Added themes yash (anitya), shunya (swayam), kirat (dhanmaya), shoor (yatna).
+# Renamed image pinjar -> kankal (too close to pinjra "cage").
+#
+# REVIEW: ambiguous images
+#  kuan "well"            : water well vs "doing well"; use "water well" in prompts
+#  tarazu "scales"        : balance scales vs fish scales (and a fish image exists)
+#  nain "eye"/jeebh "tongue" are body parts, may clash with figurative use ("eye on the prize")
+#  ghada "pot of water" vs kumhar "potter and clay" : the pot is the product, the potter the maker
+#  shamshan "cremation ground" / arthi "bier" / kafan "shroud" / raakh "ash" : a funeral cluster, easily co-mentioned
+#  nadi "river" / samudra "ocean" / os "dew" / ghada "pot of water" / kuan "well" : water-ish images overlap
+#  chandrama "moon" vs chandan "sandalwood" (similar sound; names themselves differ)
+#  sona "gold" vs heera "diamond" vs moti "pearl" vs paras "philosopher's stone" : all precious-things
+#  patthar "stone" vs paras "philosopher's stone" vs chakki "grindstone" : stone cluster
+#  chadar "cloth sheet" vs dhaga "thread" vs kapas "cotton" vs kargha "loom" vs charkha "spinning wheel" : weaver cluster
+#  hans "swan" vs bagula "heron" : both white water birds; heron = hypocrite, swan = discerning
+#  kachhua "tortoise" ("turtle" in requests) ; sher "lion"; musafir "traveler" vs sarai "inn"
+#  tala "lock" (and key) ; tilak "forehead mark" ; teer "arrow" ; ghanti "bell" ; mor "peacock"
+#  dhuan "smoke" vs aag "fire" ; chhaya "shadow" vs shade of a tree (vriksh)
+#  gud "jaggery" (request may say "sugar"); doodh "milk" ; namak "salt" ; mathani "churn"
+#  pandit "priest" vs mullah "cleric" : intended as ritual figures, not as ordinary teachers
+
+families:
+  - {id: anitya,   name: impermanence and death}
+  - {id: swayam,   name: the self and ego}
+  - {id: guruman,  name: guru and teaching}
+  - {id: ishwar,   name: devotion and the divine}
+  - {id: karmkand, name: hypocrisy and ritual}
+  - {id: achar,    name: speech and conduct}
+  - {id: virah,    name: love and longing}
+  - {id: samaj,    name: company and society}
+  - {id: yatna,    name: patience and effort}
+  - {id: dhanmaya, name: wealth and desire}
+  - {id: satyagyan, name: truth and knowledge}
+
+themes:
+  # --- impermanence and death ---
+  - {id: mrityu,    name: death,              desc: "mortality, life running out", family: anitya}
+  - {id: kaal,      name: time the devourer,  desc: "Time personified as a hunter who eats everyone, not the single event of dying", family: anitya}
+  - {id: kshanik,   name: fleeting life,      desc: "life is brief and unreal like a water bubble, morning dew or a dream that vanishes on waking, so use it well", family: anitya}
+  - {id: jara,      name: old age,            desc: "white hair, a bent body and failing strength; youth gone before one notices", family: anitya}
+  - {id: khalihath, name: empty-handed,       desc: "everyone leaves with nothing; no wealth, kin or fame goes along on the last journey", family: anitya}
+  - {id: jagmela,   name: world as a fair,    desc: "the world is a passing fair or traveler's inn where we stay a few days then move on", family: anitya}
+  - {id: avagaman,  name: birth and rebirth,  desc: "the wheel of repeated births and deaths; this human birth is a rare chance to break it", family: anitya}
+  - {id: yash,      name: name left behind,   desc: "what remains after death is only one's deeds and good name; live so that you laugh at birth and the world weeps at your going", family: anitya}
+  - {id: chetavani, name: wake-up warning,    desc: "an urgent warning to wake up now, before death comes and the chance is lost", family: anitya}
+
+  # --- the self and ego ---
+  - {id: ahankar,   name: ego,                desc: "pride, arrogance, self-importance", family: swayam}
+  - {id: vinay,     name: humility,           desc: "bowing low, being small like grass or dust; the humble are the ones who receive", family: swayam}
+  - {id: atma,      name: the true self,      desc: "what the self really is: the unborn, deathless soul within the body", family: swayam}
+  - {id: chanchalman, name: restless mind,    desc: "the wandering, monkey-like mind that runs after everything and must be tamed", family: swayam}
+  - {id: deh,       name: the body,           desc: "the body as a fragile clay vessel or a house of nine doors; precious yet not who we are", family: swayam}
+  - {id: antarkhoj, name: inward search,      desc: "we hunt in forests and temples for what lies inside us; look within, not outside", family: swayam}
+  - {id: swadosh,   name: own faults,         desc: "looking for flaws in oneself instead of in others; searching for the wicked, I found myself", family: swayam}
+  - {id: shunya,    name: emptiness,          desc: "becoming empty and hollow like a reed flute so the Lord can play through you; unlike humility, it is the self fully emptied", family: swayam}
+  - {id: nirmal,    name: pure heart,         desc: "cleanliness of the mind and heart, as opposed to washing the outer body", family: swayam}
+
+  # --- guru and teaching ---
+  - {id: guru,      name: guru,               desc: "the teacher who shows the way", family: guruman}
+  - {id: gurumahima, name: greatness of guru, desc: "praise of the guru as greater than God, since he is the one who shows God", family: guruman}
+  - {id: kuguru,    name: false teachers,     desc: "the false or blind guru and greedy teacher; the blind leading the blind", family: guruman}
+  - {id: shishya,   name: the disciple,       desc: "the disciple's readiness, obedience and surrender; the vessel must be empty to be filled", family: guruman}
+  - {id: shabd,     name: the Word,           desc: "the guru's Word (shabd) that pierces like an arrow and awakens, beyond ordinary speech", family: guruman}
+  - {id: jigyasa,   name: seeking and asking, desc: "the thirst to ask and to seek an answer; whoever searches earnestly will find", family: guruman}
+  - {id: seekh,     name: learning from all,  desc: "learning from everyday things and humble teachers, taking the good like the swan takes the pearl", family: guruman}
+  - {id: sadhu,     name: the true saint,     desc: "do not ask a saint's caste, ask his wisdom; the sword is worth more than the sheath", family: guruman}
+
+  # --- devotion and the divine ---
+  - {id: bhakti,    name: true devotion,      desc: "love of God found within, not outside", family: ishwar}
+  - {id: simran,    name: remembrance of the Name, desc: "repeating and remembering the divine Name with every breath, silently, from the heart", family: ishwar}
+  - {id: nirgun,    name: the formless God,   desc: "God without form, name or attributes, beyond images and descriptions", family: ishwar}
+  - {id: ghatghat,  name: God in every heart, desc: "the divine dwells in every being and every breath, like fragrance in a flower", family: ishwar}
+  - {id: sharan,    name: surrender,          desc: "taking refuge at the Lord's feet; giving up one's own effort and cleverness", family: ishwar}
+  - {id: kripa,     name: divine grace,       desc: "the Lord's mercy that lifts one up unasked; what effort alone cannot achieve", family: ishwar}
+  - {id: sahaj,     name: natural state,      desc: "the effortless, natural state of union (sahaj samadhi), reached without austerity or force", family: ishwar}
+  - {id: anhad,     name: unstruck sound,     desc: "the inner music heard without any instrument; the mystic experience of the soundless sound", family: ishwar}
+  - {id: mukti,     name: liberation,         desc: "release from the cycle of birth and bondage; the soul becoming free", family: ishwar}
+  - {id: dukhsukh,  name: pain and pleasure,  desc: "people remember God only in suffering and forget Him in comfort; remember Him always", family: ishwar}
+
+  # --- hypocrisy and ritual ---
+  - {id: pakhand,   name: ritual hypocrisy,   desc: "empty rituals, pilgrimages and prayer beads without sincerity", family: karmkand}
+  - {id: pratima,   name: worship of idols,   desc: "worshipping stone images; if God were found in a stone I would worship a mountain", family: karmkand}
+  - {id: vesh,      name: outer garb,         desc: "ochre robes, shaved heads, matted hair and sacred marks worn while the mind stays unchanged", family: karmkand}
+  - {id: snaan,     name: ritual bathing,     desc: "bathing in holy rivers to wash sin; the body is washed while the inner mind stays dirty", family: karmkand}
+  - {id: jaat,      name: caste pride,        desc: "birth and caste as grounds for superiority or purity; stripped of this, all are the same", family: karmkand}
+  - {id: ekeshwar,  name: one God for all,    desc: "sectarian quarrel resolved: Ram and Rahim are one, and temple and mosque point to the same Lord", family: karmkand}
+  - {id: baang,     name: loud prayer,        desc: "shouting the call to prayer or chanting loudly as though God were deaf", family: karmkand}
+  - {id: vrat,      name: fasting and penance, desc: "fasts, vows and bodily austerities taken for show instead of cleansing the mind", family: karmkand}
+  - {id: dikhava,   name: show of piety,      desc: "performing holiness for onlookers; the heron standing as though in meditation, eyeing the fish", family: karmkand}
+
+  # --- speech and conduct ---
+  - {id: vani,      name: speech,             desc: "the power of words, speaking sweetly", family: achar}
+  - {id: krodh,     name: anger,              desc: "rage and a hot temper that burn the one who holds them", family: achar}
+  - {id: ninda,     name: slander and critics, desc: "gossip and fault-finding of others; keep your critic close, he cleans without soap or water", family: achar}
+  - {id: maun,      name: silence,            desc: "the worth of restraint and quiet; saying little, since a word once spoken cannot be taken back", family: achar}
+  - {id: chhal,     name: deceit,             desc: "cheating, a double face, a honeyed tongue with a dagger underneath", family: achar}
+  - {id: daya,      name: compassion,         desc: "kindness to the weak and suffering; where there is compassion there is dharma", family: achar}
+  - {id: kshama,    name: forgiveness,        desc: "forgiving wrongs; where there is forgiveness, God is there", family: achar}
+  - {id: parupkar,  name: serving others,     desc: "doing good for others without return, like trees and rivers that give freely", family: achar}
+  - {id: kaam,      name: lust,               desc: "bodily craving and sensual urge as a fire that blinds and drags the seeker down", family: achar}
+  - {id: ahimsa,    name: non-violence,       desc: "not harming living beings, especially cruelty to animals and eating of flesh", family: achar}
+
+  # --- love and longing ---
+  - {id: prem,      name: love,               desc: "love that cannot be learned from books", family: virah}
+  - {id: viraha,    name: pain of separation, desc: "the lover burning in separation from the Beloved; sleepless, tearful, bereft", family: virah}
+  - {id: milan,     name: union with Beloved, desc: "the joy of meeting the Beloved at last, drop merging into ocean", family: virah}
+  - {id: suhag,     name: soul as bride,      desc: "the soul as a bride awaiting the divine bridegroom; the wedding and the home of the husband", family: virah}
+  - {id: pyas,      name: thirst for God,     desc: "an aching spiritual thirst that no worldly water quenches", family: virah}
+  - {id: deewana,   name: love-madness,       desc: "the lover gone mad, careless of the world's opinion, intoxicated by the Beloved", family: virah}
+  - {id: balidan,   name: sacrificing the head, desc: "love demands giving up the self entirely; the path of love is for those who lay down their heads", family: virah}
+  - {id: anand,     name: bliss,              desc: "the speechless sweetness of joy once tasted, like a mute man tasting jaggery", family: virah}
+  - {id: ashru,     name: tears of longing,   desc: "weeping for the Beloved; tears that wash the heart clean", family: virah}
+
+  # --- company and society ---
+  - {id: satsang,   name: good company,       desc: "the people you keep shape you", family: samaj}
+  - {id: kusang,    name: bad company,        desc: "the harm of keeping low or wicked company; the bad rub off on you", family: samaj}
+  - {id: durjan,    name: the wicked,         desc: "the nature of wicked and wrongful people, how to deal with them or stay clear", family: samaj}
+  - {id: fitrat,    name: inborn nature,      desc: "nature that does not change: wash a coal as you will and it stays black, the snake stays venomous", family: samaj}
+  - {id: samata,    name: equality,           desc: "all humans are made of the same clay and light; no high and low in the eyes of the Maker", family: samaj}
+  - {id: kutumb,    name: family ties,        desc: "kin and household who love us for their own benefit and cannot go with us", family: samaj}
+  - {id: raja,      name: kings and power,    desc: "rulers and the powerful are as mortal as the poor; power cannot buy the Lord", family: samaj}
+  - {id: seva,      name: service,            desc: "humble selfless service of the guru, saints and the needy", family: samaj}
+  - {id: mitra,     name: friends,            desc: "true and false friends; a friend in need and the one who flatters in good times", family: samaj}
+
+  # --- patience and effort ---
+  - {id: dhairya,   name: patience,           desc: "waiting, things happen in their own time", family: yatna}
+  - {id: aaj,       name: act today,          desc: "do now what you plan for tomorrow; procrastination until the moment is gone", family: yatna}
+  - {id: abhyas,    name: steady practice,    desc: "small repeated effort day by day, drop by drop filling the pot; the rope marking the stone", family: yatna}
+  - {id: karmphal,  name: deeds and fruit,    desc: "as you sow so you reap; the results of one's own actions will return to the doer", family: yatna}
+  - {id: aalas,     name: laziness,           desc: "sloth and sleeping away the days instead of doing the work of life", family: yatna}
+  - {id: lagan,     name: single-minded focus, desc: "unwavering persistence and focused determination toward a single goal until it is reached", family: yatna}
+  - {id: himmat,    name: courage,            desc: "the daring to plunge into deep water; those who dare to dive find the pearl, those who stay on the shore find nothing", family: yatna}
+  - {id: shoor,     name: inner warrior,      desc: "the true hero fights the inner war against lust and anger and never flees the field; unlike courage to seek, it is steadfastness in battle", family: yatna}
+  - {id: sanyam,    name: moderation,         desc: "the middle path: too much talk, too much rain, too much sun are all bad; restraint in all things", family: yatna}
+
+  # --- wealth and desire ---
+  - {id: maya,      name: illusion,           desc: "worldly attachment, things that seem real but are not", family: dhanmaya}
+  - {id: sampatti,  name: wealth,             desc: "hoarding riches and property that fall away at death; the miser's heap", family: dhanmaya}
+  - {id: santosh,   name: contentment,        desc: "being satisfied with enough: when contentment comes, all wealth is as dust", family: dhanmaya}
+  - {id: lobh,      name: greed and craving, desc: "hunger for more gain and profit, and desire that is never satisfied however much one gets", family: dhanmaya}
+  - {id: fakiri,    name: chosen poverty,     desc: "the beggar-saint's freedom: owning nothing and therefore fearing nothing", family: dhanmaya}
+  - {id: moh,       name: clinging,           desc: "emotional attachment to particular people, children and possessions, the hook of 'mine'", family: dhanmaya}
+  - {id: vairagya,  name: detachment,         desc: "living in the world without clinging to it, like a lotus in water, untouched", family: dhanmaya}
+  - {id: kirat,     name: honest livelihood,  desc: "earning one's bread by honest work, as the weaver sings at his loom; unlike hoarding, it is enough earned cleanly", family: dhanmaya}
+  - {id: daan,      name: giving,             desc: "charity and giving freely: the more you give, the more it grows", family: dhanmaya}
+
+  # --- truth and knowledge ---
+  - {id: satya,     name: truth,              desc: "there is no penance greater than truth, no sin greater than lying; living honestly", family: satyagyan}
+  - {id: gyan,      name: knowledge,          desc: "inner wisdom that lights up the darkness of the mind", family: satyagyan}
+  - {id: agyan,     name: ignorance,          desc: "the darkness of not-knowing that makes one take the false for the true", family: satyagyan}
+  - {id: pothi,     name: bookish learning,   desc: "reading countless books yet remaining unlettered, as the one syllable of love is never read", family: satyagyan}
+  - {id: anubhav,   name: direct experience,  desc: "what I saw with my own eyes, not what I read or heard; knowing by living it", family: satyagyan}
+  - {id: viveka,    name: discernment,        desc: "the power to separate real from unreal, like the swan separating milk from water", family: satyagyan}
+  - {id: jagran,    name: spiritual awakening, desc: "waking from the sleep of ignorance into awareness; the inner eye opening", family: satyagyan}
+  - {id: ulatbansi, name: upside-down sayings, desc: "paradoxes and inversions: the fish thirsty in water, the ocean on fire, the cloud rising from the ground", family: satyagyan}
+  - {id: saar,      name: the essence,        desc: "keep the essence and blow away the husk; discard the empty outward form and take the substance", family: satyagyan}
+
+images:
+  - {id: deepak,  name: lamp}
+  - {id: kumhar,  name: potter and clay}
+  - {id: kuan,    name: well}
+  - {id: machhli, name: fish}
+  - {id: mala,    name: prayer beads}
+  - {id: chandan, name: sandalwood}
+  - {id: patang,  name: moth}
+  - {id: bazaar,  name: market}
+  - {id: naav,    name: boat}
+  - {id: vriksh,  name: tree}
+  # weaver and artisan
+  - {id: kargha,   name: weaver's loom}
+  - {id: charkha,  name: spinning wheel}
+  - {id: kapas,    name: cotton}
+  - {id: chadar,   name: cloth sheet}
+  - {id: dhaga,    name: thread}
+  - {id: sui,      name: needle}
+  - {id: chakki,   name: grindstone}
+  - {id: kolhu,    name: oil press}
+  - {id: bhatti,   name: furnace}
+  - {id: kasauti,  name: touchstone}
+  - {id: tarazu,   name: scales}
+  - {id: rassi,    name: rope}
+  - {id: ghada,    name: pot of water}
+  # birds and animals
+  - {id: koyal,    name: cuckoo}
+  - {id: hans,     name: swan}
+  - {id: kauwa,    name: crow}
+  - {id: kasturi,  name: musk deer}
+  - {id: bagula,   name: heron}
+  - {id: chakor,   name: chakor bird}
+  - {id: papiha,   name: rainbird}
+  - {id: tota,     name: parrot}
+  - {id: mor,      name: peacock}
+  - {id: pinjra,   name: cage}
+  - {id: jaal,     name: net}
+  - {id: sarp,     name: snake}
+  - {id: sher,     name: lion}
+  - {id: hathi,    name: elephant}
+  - {id: bhanwra,  name: bee}
+  - {id: makkhi,   name: fly}
+  - {id: kachhua,  name: tortoise}
+  # precious things and stone
+  - {id: moti,     name: pearl}
+  - {id: heera,    name: diamond}
+  - {id: paras,    name: philosopher's stone}
+  - {id: sona,     name: gold}
+  - {id: patthar,  name: stone}
+  # nature
+  - {id: chandrama, name: moon}
+  - {id: suraj,    name: sun}
+  - {id: taare,    name: stars}
+  - {id: badal,    name: cloud}
+  - {id: samudra,  name: ocean}
+  - {id: nadi,     name: river}
+  - {id: pahad,    name: mountain}
+  - {id: ret,      name: sand}
+  - {id: van,      name: forest}
+  - {id: kamal,    name: lotus}
+  - {id: kanta,    name: thorn}
+  - {id: khajur,   name: date palm}
+  - {id: beej,     name: seed}
+  - {id: patta,    name: leaf}
+  - {id: aag,      name: fire}
+  - {id: chhaya,   name: shadow}
+  - {id: os,       name: dew}
+  # places
+  - {id: ghar,     name: house}
+  - {id: mandir,   name: temple}
+  - {id: masjid,   name: mosque}
+  - {id: shamshan, name: cremation ground}
+  - {id: sarai,    name: inn}
+  - {id: darwaza,  name: door}
+  - {id: mahal,    name: palace}
+  - {id: chauraha, name: crossroads}
+  - {id: pul,      name: bridge}
+  # people
+  - {id: pandit,   name: priest}
+  - {id: mullah,   name: cleric}
+  - {id: jogi,     name: yogi}
+  - {id: sahukar,  name: moneylender}
+  - {id: chor,     name: thief}
+  - {id: bhikhari, name: beggar}
+  - {id: andha,    name: blind man}
+  - {id: musafir,  name: traveler}
+  - {id: vaidya,   name: physician}
+  - {id: dhobi,    name: washerman}
+  # objects
+  - {id: darpan,   name: mirror}
+  - {id: supa,     name: winnowing fan}
+  - {id: doodh,    name: milk}
+  - {id: namak,    name: salt}
+  - {id: gud,      name: jaggery}
+  - {id: mathani,  name: churn}
+  - {id: tumba,    name: bitter gourd}
+  - {id: tilak,    name: forehead mark}
+  - {id: raakh,    name: ash}
+  - {id: kafan,    name: shroud}
+  - {id: arthi,    name: bier}
+  - {id: doli,     name: palanquin}
+  - {id: ektara,   name: one-string lute}
+  - {id: ghanti,   name: bell}
+  - {id: talwar,   name: sword}
+  - {id: teer,     name: arrow}
+  - {id: tala,     name: lock}
+  - {id: kankal,   name: skeleton}
+  - {id: jeebh,    name: tongue}

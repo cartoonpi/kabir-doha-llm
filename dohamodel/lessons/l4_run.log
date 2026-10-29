@@ -1,0 +1,37 @@
+parameters: 1,800,960   train chars: 3,493   parameters per train char: 516
+step    0   train 4.206   val 4.207   (ln 63 = 4.143)
+step  100   train 2.086   val 2.701   best val 2.692@50   53s
+step  200   train 0.775   val 3.494   best val 2.692@50   107s
+step  300   train 0.193   val 4.364   best val 2.692@50   161s
+step  400   train 0.114   val 4.848   best val 2.692@50   217s
+step  500   train 0.078   val 5.081   best val 2.692@50   273s
+step  600   train 0.070   val 5.305   best val 2.692@50   326s
+step  700   train 0.064   val 5.372   best val 2.692@50   378s
+step  800   train 0.056   val 5.419   best val 2.692@50   430s
+step  900   train 0.057   val 5.660   best val 2.692@50   482s
+step 1000   train 0.056   val 5.770   best val 2.692@50   534s
+step 1100   train 0.053   val 5.744   best val 2.692@50   586s
+step 1200   train 0.052   val 5.738   best val 2.692@50   637s
+step 1300   train 0.052   val 5.770   best val 2.692@50   689s
+step 1400   train 0.053   val 5.696   best val 2.692@50   741s
+step 1500   train 0.053   val 5.791   best val 2.692@50   793s
+
+best val 2.692 at step 50   (bigram best val: 2.736)
+
+[final model] prompt 'बुरा जो देखन' (a TRAIN doha):
+  बुरा जो देखन मैं चला, बुरा न मिलिया कोय। / जो दिल खोजा आपना, मुझसा बुरा न कोय॥
+  बुरा जो देखन मैं चला, बुरा न मिलिया कोय। / जो दिल खोजा आपना, मुझसा बुरा न कोय॥
+  बुरा जो देखन मैं चला, बुरा न मिलिया कोय। / जो दिल खोजा आपना, मुझसा बुरा न कोय॥
+[final model] prompt from a blank line (free writing):
+   /  / कबीर सो धन संचिए, जो आगे को होय। / सीस चढ़ाए पोटली, ले जात न देख्यो कोय॥
+   /  / बुरा जो देखन मैं चला, बुरा न मिलिया कोय। / जो दिल खोजा आपना, मुझसा बुरा न कोय॥
+   / प्रेम पियाला जो पिए, सीस दच्छिना देय। / लोभी सीस न दे सके, नाम प्रेम का लेय॥
+
+[best-val model] prompt 'बुरा जो देखन' (a TRAIN doha):
+  बुरा जो देखन कल गुं अखोये मे कण सहि न जा य॥
+  बुरा जो देखन जारे ही ब हना कीरी बुप, ज काचाय॥
+  बुरा जो देखन स॥
+[best-val model] prompt from a blank line (free writing):
+   / ककल गुं अखो को स बण सहि न जा य॥
+   / दहा ड़ा बब हना कीरी ते बेर काचाय॥
+   / तर तया ति दवल बञी, आगो जकडझद कते दो्करा को जाँ अ, को ज ब सोय। /  / पूपार न पाह॥

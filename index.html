@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Doha LLM Pages</title>
+<!-- Landing page for the local server:  cd dohellm && python -m http.server 8000 -->
+<style>
+  :root { --bg: #f7f5f0; --card: #ffffff; --text: #1f1d1a; --muted: #6b665d; --line: #e4e0d6; --accent: #b5532a; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #161513; --card: #201e1b; --text: #ece8e1; --muted: #a39d92; --line: #35322d; --accent: #e58a5c; }
+  }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 640px; margin: 0 auto; padding: 40px 16px; }
+  a.card { display: block; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px;
+    margin-bottom: 14px; color: inherit; text-decoration: none; }
+  a.card:hover { border-color: var(--accent); }
+  .t { font-weight: 650; color: var(--accent); }
+  .d { color: var(--muted); font-size: .92rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Kabir doha generator: pages</h1>
+  <a class="card" href="clasifierLM/classifier/web/"><div class="t">Tag classifier</div>
+    <div class="d">English request → theme and image tags (fastText-style model).</div></a>
+  <a class="card" href="dohamodel/web/"><div class="t">Doha model playground</div>
+    <div class="d">The toy transformer from Lessons 4–5: slide through training, watch it go from letter soup to copying.</div></a>
+  <a class="card" href="site/"><div class="t">Kabir Doha Generator (production site)</div>
+    <div class="d">The deployable page in site/: describe it in English or choose themes, get a doha. Cloudflare Pages ready.</div></a>
+  <a class="card" href="dohamodel/web/steer.html"><div class="t">Doha generator: full loop</div>
+    <div class="d">English request → classifier → tags → tag-steered model (tags_5k / tags_2500) → matra filter → a doha that scans.</div></a>
+</main>
+</body>
+</html>

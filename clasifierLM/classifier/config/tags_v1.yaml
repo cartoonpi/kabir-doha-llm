@@ -1,0 +1,32 @@
+# Tag vocabulary: the single source of truth for every script (and the doha model).
+# PLACEHOLDER from the spec -- the owner will finalize it (images will grow to ~30).
+# Changing ids later means regenerating data and retraining, so settle this early.
+#
+# id   = stable machine name (shared with the doha model)
+# name = English name (used in prompts and reports)
+# desc = one-line description that goes into the LLM generation prompt
+
+themes:   # exactly one per request, or "none"
+  - {id: guru,      name: guru,               desc: "the teacher who shows the way"}
+  - {id: maya,      name: illusion,           desc: "worldly attachment, things that seem real but are not"}
+  - {id: mrityu,    name: death,              desc: "mortality, life running out"}
+  - {id: ahankar,   name: ego,                desc: "pride, arrogance, self-importance"}
+  - {id: pakhand,   name: ritual hypocrisy,   desc: "empty rituals, pilgrimages and prayer beads without sincerity"}
+  - {id: bhakti,    name: true devotion,      desc: "love of God found within, not outside"}
+  - {id: vani,      name: speech,             desc: "the power of words, speaking sweetly"}
+  - {id: dhairya,   name: patience,           desc: "waiting, things happen in their own time"}
+  - {id: satsang,   name: good company,       desc: "the people you keep shape you"}
+  - {id: prem,      name: love,               desc: "love that cannot be learned from books"}
+
+images:   # zero, one or two per request
+  - {id: deepak,  name: lamp}
+  - {id: kumhar,  name: potter and clay}
+  - {id: kuan,    name: well}
+  - {id: machhli, name: fish}
+  - {id: mala,    name: prayer beads}
+  - {id: chandan, name: sandalwood}
+  - {id: patang,  name: moth}
+  - {id: bazaar,  name: market}
+  - {id: naav,    name: boat}
+  - {id: vriksh,  name: tree}
+  # owner will extend to ~30

@@ -1,0 +1,33 @@
+# Hyperparameters for src/train.py. "Hyperparameters" = settings we choose,
+# as opposed to "parameters" (weights) that training learns.
+
+model:
+  buckets: 16384     # B: rows in the embedding table (hash % B). v2 sweep: 32k/65k gave no gain at 2-4x the size
+  dim: 100           # d: numbers per row. v2: 32->64 big gain, 64->100 small, 100->200 noise (+0.003)
+  hidden: false      # optional Linear(d,d)+ReLU between h and the heads
+
+optim:
+  name: sgd          # fallback: adam
+  lr: 0.5            # SGD: decays linearly to 0 over training (fastText schedule). Adam: try 0.01, constant.
+
+batch_size: 32
+max_epochs: 50       # v2: best runs peaked at epoch 23-25 of 25; at 50 they peak ~43 (image F1 0.86 -> 0.89)
+patience: 5          # early stopping: stop after 5 epochs without val macro-F1 improving
+image_loss_weight: 5      # λ in loss = CE(theme) + λ·BCE(images). v1: 1.0; v2 sweep winner 5
+pos_weight_cap: 30       # cap on per-image positive weight (negatives/positives). v1: 10; v2 sweep winner 30
+# Model selection (early stopping + best checkpoint + sweep winner):
+#   theme = val theme macro-F1 (spec, v1);  mean = average of theme macro-F1 and image micro-F1 (v2:
+#   with theme-only selection the 100-image head stopped at F1 0.28).
+select_metric: mean
+
+# python -m src.train --sweep  tries every combination below and picks the best
+# by val theme macro-F1. Any key here may be swept: dim, buckets, hidden, lr, pos_weight_cap.
+# v1 (10 tags) grid: dim [16,32,64] x buckets [4096,16384] x hidden [false,true] x lr [0.1,0.5];
+# hidden lost every run, so v2 (100 tags) drops it and adds bigger d/B and the pos_weight cap
+# (each image is in only ~1% of requests now, so negatives/positives is ~100, far above 10).
+sweep:
+  dim: [32, 64, 100]
+  buckets: [16384, 32768, 65536]
+  pos_weight_cap: [10, 30]
+  image_loss_weight: [1, 5]   # λ: λ=5 lifted image F1 0.28 -> 0.74 but cost theme F1 0.72 -> 0.68 at d=32
+  # lr fixed at 0.5: in v1, lr 0.1 lost every comparison by ~0.15 F1

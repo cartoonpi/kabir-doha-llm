@@ -1,0 +1,50 @@
+vocab 64   parameters 1,801,344   train chars 130,394   val chars 22,952   params per train char 13.8
+step     0   train 4.255   val 4.264   best 4.264@0   1s
+step   100   train 2.445   val 2.459   best 2.459@100   57s
+step   200   train 2.205   val 2.218   best 2.218@200   112s
+step   300   train 2.003   val 2.031   best 2.031@300   167s
+step   400   train 1.876   val 1.923   best 1.923@400   223s
+step   500   train 1.788   val 1.856   best 1.856@500   282s
+step   600   train 1.706   val 1.791   best 1.791@600   340s
+step   700   train 1.649   val 1.757   best 1.757@700   397s
+step   800   train 1.586   val 1.729   best 1.729@800   455s
+step   900   train 1.528   val 1.705   best 1.705@900   514s
+step  1000   train 1.475   val 1.686   best 1.686@1000   574s
+step  1100   train 1.434   val 1.678   best 1.678@1100   633s
+step  1200   train 1.366   val 1.665   best 1.665@1200   689s
+step  1300   train 1.311   val 1.664   best 1.664@1300   746s
+step  1400   train 1.261   val 1.660   best 1.660@1400   802s
+step  1500   train 1.198   val 1.660   best 1.660@1500   858s
+step  1600   train 1.151   val 1.671   best 1.660@1500   915s
+step  1700   train 1.104   val 1.670   best 1.660@1500   969s
+step  1800   train 1.042   val 1.694   best 1.660@1500   1023s
+step  1900   train 0.988   val 1.700   best 1.660@1500   1077s
+step  2000   train 0.945   val 1.709   best 1.660@1500   1130s
+step  2100   train 0.913   val 1.714   best 1.660@1500   1183s
+step  2200   train 0.868   val 1.728   best 1.660@1500   1240s
+step  2300   train 0.843   val 1.743   best 1.660@1500   1297s
+step  2400   train 0.817   val 1.755   best 1.660@1500   1353s
+step  2500   train 0.789   val 1.764   best 1.660@1500   1409s
+step  2600   train 0.766   val 1.772   best 1.660@1500   1465s
+step  2700   train 0.749   val 1.779   best 1.660@1500   1520s
+step  2800   train 0.730   val 1.794   best 1.660@1500   1574s
+step  2900   train 0.719   val 1.795   best 1.660@1500   1631s
+step  3000   train 0.713   val 1.808   best 1.660@1500   1688s
+
+best val loss 1.660 at step 1500   (toy best 2.69, bigram 2.74 -- but a different val set)
+200 samples at temperature 0.8:
+  two-line doha shape: 80%
+  copy rate (5+ words in a row from a real doha): 0%   exact copies: 0%
+  rhythm pass (13+11): 2%   (real Kabir: 61%)
+
+first 10 samples:
+              कबीर बिचारी वह है, कबहूँ न चीन्हे न होय। / से बने भँवर से पड़ा, बूड़े अंत न देय॥
+              उलटी अललपच्छल के, पड़ी न खोय बिजाय। / अब के अनहद न किया, सतगुरु दरसन कोय॥
+              सबही गाड़े पाँव के, जाँच गुरु गुरु गहिरा पेख। / अंतर बिसरे लालचा, के हाथ करि अज्ञान॥
+              प्रेम की के फाँसत बसे, करि परे न कोय। / भावे अधिक न छाड़िया, अनत भया सब कोय॥
+              पाछे के परिचय भई, हरिजन में खजाय। / जब लग मन रोबन की, तब लग अमी लुहाल॥
+              सतगुरु सिष सबद मिले, कबहूँ न होय अरु देय॥
+              चकुल चली इक चलन बचने, नरक कहा सब कोय। / लेह सतगुरु की भक्ति नहीं, जे ही बन होय सोय॥
+              जीव सेवक संसार में, सेवा सेवा नाहिं। / जे मुख से ले पाइया, घर में रहि मोहि॥
+              सबद बिना बिनु भक्ति का, मानसरोवर सुरतार। / जे मुख बिन जानही, तो निसु साधन सब संत॥
+              सोवत सेवा लेइ ले, ऊपर जे माहिं जाय। / कोटि ही उसारि के, कहाँ परमा बिधि जाय॥

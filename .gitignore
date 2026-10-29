@@ -1,0 +1,16 @@
+# environments and caches
+.venv/
+.venv-*/
+__pycache__/
+.pytest_cache/
+node_modules/
+
+# large, regenerable training outputs
+*.pt
+dohamodel/checkpoints/
+dohamodel/web/models/
+clasifierLM/classifier/logs/
+
+# per-agent working folders of the synthetic-data runs (kept.jsonl / scored.jsonl are committed)
+dohamodel/data/synth/pilot/agent_*/
+dohamodel/data/synth/full/wave_*/

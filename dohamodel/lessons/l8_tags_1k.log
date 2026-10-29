@@ -1,0 +1,54 @@
+vocab 109 (64 chars + | + 44 tags)   parameters 1,818,624
+real train 1,731 dohe   synthetic 1,000   tokens 212,394   params per token 8.6   real share of each batch 50%
+stage 1  step     0   real-train 4.786   synth 4.784   val 4.787   best 4.787@0   2s
+stage 1  step   200   real-train 2.249   synth 2.018   val 2.264   best 2.264@200   117s
+stage 1  step   400   real-train 1.943   synth 1.530   val 1.981   best 1.981@400   232s
+stage 1  step   600   real-train 1.803   synth 1.353   val 1.846   best 1.846@600   348s
+stage 1  step   800   real-train 1.706   synth 1.236   val 1.772   best 1.772@800   464s
+stage 1  step  1000   real-train 1.615   synth 1.136   val 1.715   best 1.715@1000   580s
+stage 1  step  1200   real-train 1.560   synth 1.055   val 1.678   best 1.678@1200   695s
+stage 1  step  1400   real-train 1.479   synth 0.975   val 1.656   best 1.656@1400   808s
+stage 1  step  1600   real-train 1.433   synth 0.891   val 1.646   best 1.646@1600   921s
+stage 1  step  1800   real-train 1.382   synth 0.837   val 1.633   best 1.633@1800   1030s
+stage 1  step  2000   real-train 1.324   synth 0.769   val 1.637   best 1.633@1800   1139s
+stage 1  step  2200   real-train 1.275   synth 0.707   val 1.634   best 1.633@1800   1249s
+stage 1  step  2400   real-train 1.225   synth 0.650   val 1.644   best 1.633@1800   1360s
+stage 1  step  2600   real-train 1.170   synth 0.614   val 1.637   best 1.633@1800   1480s
+stage 1  step  2800   real-train 1.136   synth 0.569   val 1.641   best 1.633@1800   1587s
+stage 1  step  3000   real-train 1.100   synth 0.536   val 1.653   best 1.633@1800   1695s
+stage 1  step  3200   real-train 1.071   synth 0.504   val 1.658   best 1.633@1800   1802s
+stage 1  step  3400   real-train 1.049   synth 0.479   val 1.661   best 1.633@1800   1911s
+stage 1  step  3600   real-train 1.026   synth 0.463   val 1.660   best 1.633@1800   2028s
+stage 1  step  3800   real-train 1.008   synth 0.443   val 1.668   best 1.633@1800   2134s
+stage 1  step  4000   real-train 0.992   synth 0.437   val 1.669   best 1.633@1800   2244s
+
+stage 1 best val 1.633 at step 1800
+
+stage 2  step     0   real-train 1.382   synth 0.837   val 1.633   best 1.633@0   2245s
+stage 2  step    50   real-train 1.336   synth 0.852   val 1.606   best 1.606@50   2275s
+stage 2  step   100   real-train 1.311   synth 0.854   val 1.603   best 1.603@100   2306s
+stage 2  step   150   real-train 1.297   synth 0.857   val 1.597   best 1.597@150   2336s
+stage 2  step   200   real-train 1.287   synth 0.857   val 1.596   best 1.596@200   2367s
+stage 2  step   250   real-train 1.282   synth 0.858   val 1.597   best 1.596@200   2394s
+stage 2  step   300   real-train 1.280   synth 0.860   val 1.596   best 1.596@300   2421s
+
+stage 2 best val 1.596 at step 300   (Lesson 7, real only, no tags: 1.660)
+
+300 samples (stage 2 model, temperature 0.8, random tags):
+  two-line doha shape: 97%
+  copy rate (5+ words from a real doha): 0%
+  rhythm: exact 6%   near 23%   (Lesson 7: exact 2%)
+  image hit: 51% of requested images appear   (a random other image: 1%)
+  device hit: 68%  (sadho / prashn / kahekabir cue word as requested; chance about 1/3)
+
+first 10:
+  [mrityu/naav/ulatbansi] near  नाव तरवै डूबर में, सुनै ना बिन आग। / जीवन सुख छाँहे कहो, जल में विष भी लाग॥
+  [dhairya/sui+tarazu/kahekabir]        सुई कैंप्रेम न को, तोड़त बिसै न कोय। / कहै कबीर बिना साधो, सतगुरु जैसा होय॥
+  [ahankar/sui/ulatbansi]        सुइँ सागर जोड़ि में ना करि, ऐसा करि पछताय। / आगे जाय पड़ा से, गये छिन छिना जाय॥
+  [vani/kasauti+hans/ulatbansi]        कसौटी कस परखि कै, तोल सोना मोह लोग। / जीवन पर न पसखै जो, कहै कबीर जग पोव॥
+  [dhairya/koyal+kauwa/sadho]        कौवा धीरज कोयल रहै, काग कहै मोह न डोर। / धीरज धर मन सुनो, सहज पिय मन चोर॥
+  [prem/chakor/prashn]        कबीर चंदा तें क्या भया, प्रेम बिना दिन खाय॥
+  [guru/deepak/ulatbansi] exact  सतगुरु दीपक बारि सरै, ज्यों मानुष में निराय। / जे बारे क्यों गाइया, सतगुरु की से जाय॥
+  [vani/chadar/ulatbansi]        मीठी बोल सुनि जो, सुमिरन न सुधान। / जो बोल सोवै कौन, कड़वा अपना नाम॥
+  [satsang/hans/kahekabir]        संगति साँप संग ले, हंस सोवै संग। / कहै कबीर सतगुरु बिनु, कोइ उजली पतंग॥
+  [dhairya/charkha/sadho]        साधो चरखा घूमे रे, जल सूत का जीवै। / कहै कबीर सुनि सरसो, गरब नाहिं कोय॥

@@ -1,0 +1,34 @@
+# Keyword baseline: tag id -> English keywords (lowercase; multi-word phrases OK).
+# Seeded with obvious words; EXTEND THIS to make the baseline stronger.
+#
+# Matching is whole-word on the normalized text (same normalization as
+# featurize.py), and a trailing "s" is also accepted ("lamp" matches "lamps").
+#
+# Known weaknesses, kept on purpose so you can see a keyword system fail:
+#   - "well" matches "I'm doing well"     (ambiguity)
+#   - "light" matches "a light dinner"    (ambiguity)
+#   - "my grandfather's last days" has no death keyword (indirect phrasing)
+
+themes:
+  guru:    [guru, teacher, master, mentor, guide, disciple, student, lesson]
+  maya:    [illusion, maya, attachment, wealth, money, possession, mirage, fake, dream]
+  mrityu:  [death, die, dying, dead, mortality, funeral, last breath, grave, end of life]
+  ahankar: [ego, pride, proud, arrogant, arrogance, boast, vanity, superior]
+  pakhand: [ritual, pilgrimage, temple, hypocrisy, hypocrite, pretend, show off, chanting]
+  bhakti:  [devotion, god, divine, within, worship, devotee, soul, faith]
+  vani:    [speech, word, speak, tongue, voice, harsh, sweetly, talk]
+  dhairya: [patience, patient, wait, waiting, season, slowly, hurry, rush]
+  satsang: [company, friend, companion, influence, surround, keep company]
+  prem:    [love, beloved, affection, lover, heart, books]
+
+images:
+  deepak:  [lamp, diya, flame, candle, wick, light]
+  kumhar:  [potter, clay, pot, wheel, kiln]
+  kuan:    [well, bucket, rope]
+  machhli: [fish, water, pond]
+  mala:    [prayer beads, beads, rosary, mala]
+  chandan: [sandalwood, chandan, fragrance, scent]
+  patang:  [moth, insect]
+  bazaar:  [market, bazaar, shop, vendor, buy, sell]
+  naav:    [boat, boatman, oar, ferry, sail]
+  vriksh:  [tree, branch, root, leaves, neem, banyan]

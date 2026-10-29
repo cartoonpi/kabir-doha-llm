@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Doha Model Playground</title>
+<!--
+  Playground for the toy doha transformer (web/gpt.js, weights from export.py).
+  Served together with the classifier from the dohellm/ folder:
+      cd dohellm && python -m http.server 8000
+  then open http://localhost:8000/dohamodel/web/
+-->
+<style>
+  :root {
+    --bg: #f7f5f0; --card: #ffffff; --text: #1f1d1a; --muted: #6b665d; --line: #e4e0d6;
+    --accent: #b5532a; --accent-soft: #f3e3d9; --bar: #c9a27e; --train: #8a8478; --copy: #f4d77a; --copy-text: #1f1d1a;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #161513; --card: #201e1b; --text: #ece8e1; --muted: #a39d92; --line: #35322d;
+      --accent: #e58a5c; --accent-soft: #3a2a20; --bar: #7d6450; --train: #8c8579; --copy: #6b5a1e; --copy-text: #ece8e1;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 820px; margin: 0 auto; padding: 32px 16px 64px; }
+  h1 { font-size: 1.6rem; margin: 0 0 4px; }
+  h2 { font-size: 1rem; margin: 0 0 8px; }
+  .sub, .hint { color: var(--muted); }
+  .sub { margin: 0 0 24px; }
+  .hint { font-size: .85rem; }
+  a { color: var(--accent); }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 20px; margin-bottom: 16px; }
+  .row { display: flex; gap: 8px 12px; flex-wrap: wrap; align-items: center; margin-top: 10px; }
+  .seg button, .chip, .go { border: 1px solid var(--line); background: var(--bg); color: var(--text); border-radius: 999px;
+    padding: 5px 14px; font: inherit; font-size: .9rem; cursor: pointer; }
+  .seg button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .chip:hover, .seg button:hover { border-color: var(--accent); }
+  .go { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; padding: 7px 20px; }
+  .go:disabled { opacity: .5; cursor: wait; }
+  input[type=range] { accent-color: var(--accent); width: 100%; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin-top: 12px; }
+  .stat .label { color: var(--muted); font-size: .75rem; text-transform: uppercase; letter-spacing: .06em; }
+  .stat .v { font-size: 1.35rem; font-weight: 650; font-variant-numeric: tabular-nums; }
+  .verdict { margin-top: 10px; padding: 8px 12px; border-radius: 8px; background: var(--accent-soft); font-size: .92rem; }
+  svg { width: 100%; height: auto; display: block; margin-top: 8px; }
+  svg text { fill: var(--muted); font-size: 11px; }
+  textarea { width: 100%; min-height: 64px; resize: vertical; padding: 10px 12px; font: 1.15rem/1.6 inherit; font-family: inherit;
+    color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; }
+  textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .ctl { display: grid; grid-template-columns: auto 1fr auto; gap: 4px 10px; align-items: center; min-width: 220px; flex: 1; }
+  .bars { display: grid; grid-template-columns: 96px 1fr 52px; gap: 4px 10px; align-items: center; font-size: .9rem; }
+  .bars .ch { font-size: 1.05rem; cursor: pointer; border-radius: 6px; padding: 0 6px; }
+  .bars .ch:hover { background: var(--accent-soft); }
+  .track { height: 14px; background: var(--bg); border-radius: 4px; overflow: hidden; }
+  .fill { height: 100%; background: var(--bar); border-radius: 4px; }
+  .fill.top { background: var(--accent); }
+  .num { text-align: right; font-variant-numeric: tabular-nums; color: var(--muted); }
+  .sample { border-top: 1px solid var(--line); padding: 12px 0; }
+  .sample:first-of-type { border-top: 0; }
+  .doha { font-size: 1.2rem; line-height: 1.8; white-space: pre-wrap; word-break: break-word; }
+  .doha .prompt { color: var(--muted); }
+  .doha mark { background: var(--copy); color: var(--copy-text); border-radius: 3px; }
+  .tag { display: inline-block; font-size: .8rem; border-radius: 999px; padding: 1px 10px; margin-right: 6px; background: var(--accent-soft); }
+  .err { color: #c0392b; }
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: .8rem; color: var(--muted); margin-top: 4px; }
+  .sw { display: inline-block; width: 14px; height: 3px; vertical-align: middle; margin-right: 4px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Doha model playground</h1>
+  <p class="sub">The Kabir transformers from Lessons 4, 5 and 7 (real data: 1,731 dohe from the 1926 Belvedere edition), running entirely in your browser
+    (plain JavaScript, no libraries). <a href="../../">← all pages</a></p>
+
+  <div class="card">
+    <h2>1. Pick a model and a moment in its training</h2>
+    <div class="row seg" id="models"></div>
+    <div class="row"><input type="range" id="snap" min="0" max="0" step="1"></div>
+    <div class="stats">
+      <div class="stat"><div class="label">Step</div><div class="v" id="sStep">–</div></div>
+      <div class="stat"><div class="label">Train loss</div><div class="v" id="sTrain">–</div></div>
+      <div class="stat"><div class="label">Val loss</div><div class="v" id="sVal">–</div></div>
+      <div class="stat"><div class="label">Parameters</div><div class="v" id="sParams">–</div></div>
+    </div>
+    <div class="verdict" id="verdict"></div>
+    <svg id="curve" viewBox="0 0 640 200" role="img" aria-label="Train and validation loss over training steps"></svg>
+    <div class="legend">
+      <span><span class="sw" style="background:var(--train)"></span>train loss (dohe it studied)</span>
+      <span><span class="sw" style="background:var(--accent)"></span>val loss (8 dohe it never saw)</span>
+      <span><span class="sw" style="border-top:2px dashed var(--muted);height:0"></span>bigram best val 2.74</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>2. Give it a start</h2>
+    <textarea id="prompt" lang="hi" spellcheck="false"></textarea>
+    <div class="row hint">Try:</div>
+    <div class="row" id="examples"></div>
+    <div class="row">
+      <div class="ctl"><span class="hint">Temperature</span><input type="range" id="temp" min="0.2" max="1.5" step="0.05" value="0.8"><b id="tempV">0.8</b></div>
+      <div class="ctl"><span class="hint">Samples</span><input type="range" id="count" min="1" max="6" step="1" value="3"><b id="countV">3</b></div>
+      <button class="go" id="go">Generate</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>What it predicts next</h2>
+    <p class="hint" style="margin:0 0 10px">The model's probabilities for the character after your start, updated as you type.
+      Click a character to append it and walk the model by hand.</p>
+    <div class="bars" id="next"></div>
+  </div>
+
+  <div class="card">
+    <h2>3. Samples</h2>
+    <p class="hint" style="margin:0 0 4px"><mark style="background:var(--copy);color:var(--copy-text);border-radius:3px">Highlighted</mark>
+      text is copied word for word from a training doha (a run of 12+ characters that appears in the training text). Your start is shown in grey.</p>
+    <div id="samples"><p class="hint">Press Generate.</p></div>
+  </div>
+
+  <div class="card hint" id="status">Loading…</div>
+</main>
+
+<script type="module">
+import { loadMeta, loadModel, softmax } from "./gpt.js";
+
+const MODELS = [
+  { name: "real", label: "Real Kabir · 1,731 dohe (1.8M)" },
+  { name: "big", label: "Toy big · 46 dohe (1.8M)" },
+  { name: "small", label: "Toy small · 2 layers × 48 (62K)" },
+];
+const BIGRAM_VAL = 2.736, COPY_MIN = 12;
+const $ = (id) => document.getElementById(id);
+
+const metas = {}, cache = new Map();
+let cur = { name: null, step: null, model: null };
+
+// ---------- loading ----------
+async function getMeta(name) {
+  return (metas[name] ||= await loadMeta(`models/${name}/`));
+}
+async function getModel(name, step) {
+  const key = `${name}/${step}`;
+  if (!cache.has(key)) cache.set(key, loadModel(`models/${name}/`, step, await getMeta(name)));
+  return cache.get(key);
+}
+
+// ---------- display helpers ----------
+const showChar = (c) => c === " " ? "␣ space" : c === "\n" ? "↵ newline" : /[ऀ-ःऺ-ॏ॑-ॗॢॣ]/.test(c) ? "◌" + c : c;
+const lossAt = (meta, step) => meta.log.find((r) => r.step === step);
+
+function verdict(meta, step) {
+  const r = lossAt(meta, step), b = meta.best;
+  if (!r) return "";
+  if (step === b.step || Math.abs(r.val - b.val) < 0.02) return "Best validation loss: the most general this model ever got. Expect Kabir-ish sounds, not copies.";
+  if (r.train < 0.3) return "Train loss near 0, val loss high: it has memorized the training dohe. Expect word-for-word copies.";
+  if (r.val > b.val + 0.15 && step > b.step) return "Past its best: val loss is rising while train loss keeps falling. It is starting to memorize.";
+  return "Still early: loss is falling on both sets. Expect letter soup with Hindi-like spelling.";
+}
+
+function drawCurve(meta, step) {
+  const W = 640, H = 200, L = 36, R = 12, T = 10, B = 26;
+  const maxStep = meta.log.at(-1).step, maxY = Math.max(4.5, ...meta.log.map((r) => r.val));
+  const x = (s) => L + (s / maxStep) * (W - L - R), y = (v) => T + (1 - v / maxY) * (H - T - B);
+  const path = (k) => meta.log.map((r, i) => `${i ? "L" : "M"}${x(r.step).toFixed(1)},${y(r[k]).toFixed(1)}`).join("");
+  let g = "";
+  for (let v = 0; v <= maxY; v += 1) g += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)"/><text x="${L - 6}" y="${y(v) + 4}" text-anchor="end">${v}</text>`;
+  for (const s of [0, maxStep / 2, maxStep]) g += `<text x="${x(s)}" y="${H - 8}" text-anchor="middle">${s === 0 ? "step 0" : s}</text>`;
+  g += `<line x1="${L}" x2="${W - R}" y1="${y(BIGRAM_VAL)}" y2="${y(BIGRAM_VAL)}" stroke="var(--muted)" stroke-dasharray="4 4"/>`;
+  g += `<path d="${path("train")}" fill="none" stroke="var(--train)" stroke-width="2"/>`;
+  g += `<path d="${path("val")}" fill="none" stroke="var(--accent)" stroke-width="2.5"/>`;
+  g += `<circle cx="${x(meta.best.step)}" cy="${y(meta.best.val)}" r="4" fill="var(--accent)"/><text x="${x(meta.best.step) + 7}" y="${y(meta.best.val) - 7}">best val ${meta.best.val.toFixed(2)}</text>`;
+  for (const s of meta.snapshots) g += `<line x1="${x(s)}" x2="${x(s)}" y1="${H - B}" y2="${H - B + 5}" stroke="var(--muted)"/>`;
+  g += `<line x1="${x(step)}" x2="${x(step)}" y1="${T}" y2="${H - B}" stroke="var(--text)" stroke-width="1.5" opacity=".6"/>`;
+  $("curve").innerHTML = g;
+}
+
+// ---------- model / snapshot selection ----------
+async function select(name, idx) {
+  const meta = await getMeta(name);
+  if (idx === undefined) idx = Math.max(0, meta.snapshots.indexOf(meta.snapshots.reduce((a, s) => Math.abs(s - meta.best.step) < Math.abs(a - meta.best.step) ? s : a)));
+  const step = meta.snapshots[idx];
+  $("snap").max = meta.snapshots.length - 1; $("snap").value = idx;
+  for (const b of $("models").children) b.setAttribute("aria-pressed", b.dataset.name === name);
+  const r = lossAt(meta, step);
+  $("sStep").textContent = step; $("sTrain").textContent = r.train.toFixed(3); $("sVal").textContent = r.val.toFixed(3);
+  $("sParams").textContent = meta.n_params.toLocaleString();
+  $("verdict").textContent = verdict(meta, step);
+  drawCurve(meta, step);
+  $("status").textContent = `Loading ${name} step ${step}…`;
+  cur = { name, step, model: await getModel(name, step) };
+  $("status").textContent = `Loaded ${name} model at step ${step} · vocabulary ${meta.itos.length} characters · context ${meta.config.block_size}.`;
+  if (!examplesBuilt) buildExamples(meta);
+  updateNext();
+}
+
+// ---------- prompt, next-char panel ----------
+let examplesBuilt = false;
+function buildExamples(meta) {
+  examplesBuilt = true;
+  const add = (label, text, tag) => {
+    const b = document.createElement("button"); b.className = "chip";
+    b.innerHTML = `<span class="tag">${tag}</span>${label}`;
+    b.onclick = () => { $("prompt").value = text; updateNext(); };
+    $("examples").append(b);
+  };
+  add("blank line (free writing)", "", "free");
+  for (const d of meta.train_dohe.slice(0, 3)) add(d.split(" ").slice(0, 3).join(" "), d.split(" ").slice(0, 3).join(" "), "seen");
+  for (const d of meta.val_dohe.slice(0, 3)) add(d.split(" ").slice(0, 3).join(" "), d.split(" ").slice(0, 3).join(" "), "never seen");
+  $("prompt").value = meta.train_dohe.find((d) => d.startsWith("बुरा"))?.slice(0, 12) || "";
+}
+
+function promptIds() {
+  const meta = metas[cur.name];
+  const stoi = Object.fromEntries(meta.itos.map((c, i) => [c, i]));
+  const text = "\n" + $("prompt").value.normalize("NFC");   // every doha follows a newline in training
+  const unknown = [...new Set([...text].filter((c) => !(c in stoi)))];
+  return { ids: [...text].filter((c) => c in stoi).map((c) => stoi[c]), unknown };
+}
+
+let nextTimer;
+function updateNext() {
+  clearTimeout(nextTimer);
+  nextTimer = setTimeout(() => {
+    if (!cur.model) return;
+    const meta = metas[cur.name], { ids, unknown } = promptIds();
+    const p = softmax(cur.model.feed(cur.model.newState(), ids));
+    const top = [...p].map((v, i) => [i, v]).sort((a, b) => b[1] - a[1]).slice(0, 12);
+    const el = $("next"); el.replaceChildren();
+    top.forEach(([i, v], rank) => {
+      const ch = document.createElement("div"); ch.className = "ch"; ch.textContent = showChar(meta.itos[i]);
+      ch.title = "append this character";
+      ch.onclick = () => { $("prompt").value += meta.itos[i]; updateNext(); };
+      const tr = document.createElement("div"); tr.className = "track";
+      const f = document.createElement("div"); f.className = "fill" + (rank === 0 ? " top" : ""); f.style.width = (v * 100) + "%"; tr.append(f);
+      const n = document.createElement("div"); n.className = "num"; n.textContent = (v * 100).toFixed(1) + "%";
+      el.append(ch, tr, n);
+    });
+    if (unknown.length) el.insertAdjacentHTML("afterbegin", `<p class="err" style="grid-column:1/-1;margin:0">Not in the model's vocabulary (ignored): ${unknown.map(showChar).join(" ")}</p>`);
+  }, 120);
+}
+
+// ---------- copy check ----------
+function copiedMask(s, trainText) {
+  const mask = new Array(s.length).fill(false);
+  for (let i = 0; i < s.length; i++) {
+    let L = COPY_MIN;
+    if (i + L > s.length || !trainText.includes(s.slice(i, i + L))) continue;
+    while (i + L < s.length && trainText.includes(s.slice(i, i + L + 1))) L++;
+    for (let j = i; j < i + L; j++) mask[j] = true;
+  }
+  return mask;
+}
+
+function renderSample(prompt, gen, trainText) {
+  const full = [...(prompt + gen)], mask = copiedMask(full.join(""), trainText) ;
+  // copiedMask works on UTF-16 indices; Devanagari is all in the BMP, so 1 code point = 1 index
+  const div = document.createElement("div"); div.className = "doha";
+  let html = "";
+  full.forEach((c, i) => {
+    const e = c.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+    const inPrompt = i < [...prompt].length;
+    html += (mask[i] ? `<mark${inPrompt ? ' class="prompt"' : ""}>${e}</mark>` : inPrompt ? `<span class="prompt">${e}</span>` : e);
+  });
+  div.innerHTML = html;
+  const genMask = mask.slice([...prompt].length), pct = genMask.length ? genMask.filter(Boolean).length / genMask.length : 0;
+  const whole = trainText.includes((prompt + gen).trim()) && gen.length > 20;
+  const info = document.createElement("div"); info.className = "hint";
+  info.textContent = `${gen.length} new characters · ${(pct * 100).toFixed(0)}% copied${whole ? " · this is an exact training doha" : ""}`;
+  const wrap = document.createElement("div"); wrap.className = "sample"; wrap.append(div, info);
+  return wrap;
+}
+
+async function generate() {
+  if (!cur.model) return;
+  const meta = metas[cur.name], { ids } = promptIds(), T = +$("temp").value, n = +$("count").value;
+  const stopId = meta.itos.indexOf("॥"), trainText = meta.train_dohe.join("\n\n");
+  const prompt = $("prompt").value.normalize("NFC");
+  $("go").disabled = true; $("samples").replaceChildren();
+  const t0 = performance.now();
+  for (let k = 0; k < n; k++) {
+    await new Promise((r) => setTimeout(r, 0));   // let the page repaint between samples
+    const out = cur.model.generate(ids, { maxNew: 140, temperature: T, stopId });
+    $("samples").append(renderSample(prompt, out.map((i) => meta.itos[i]).join(""), trainText));
+  }
+  $("status").textContent = `Generated ${n} samples in ${((performance.now() - t0) / 1000).toFixed(1)} s with the ${cur.name} model at step ${cur.step}, temperature ${T}.`;
+  $("go").disabled = false;
+}
+
+// ---------- wire up ----------
+for (const m of MODELS) {
+  const b = document.createElement("button"); b.textContent = m.label; b.dataset.name = m.name;
+  b.onclick = () => select(m.name); $("models").append(b);
+}
+$("snap").oninput = () => select(cur.name, +$("snap").value);
+$("prompt").oninput = updateNext;
+$("temp").oninput = () => ($("tempV").textContent = $("temp").value);
+$("count").oninput = () => ($("countV").textContent = $("count").value);
+$("go").onclick = generate;
+
+try { await select("real"); }
+catch (e) {
+  $("status").innerHTML = `<span class="err">Could not load the model: ${e.message}.</span> Serve the dohellm/ folder: <code>python -m http.server 8000</code>, then open <code>http://localhost:8000/dohamodel/web/</code>`;
+}
+</script>
+</body>
+</html>

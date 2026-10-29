@@ -1,0 +1,71 @@
+vocab 109 (64 chars + | + 44 tags)   parameters 1,818,624
+real train 1,731 dohe   synthetic 4,941   tokens 522,025   params per token 3.5   real share of each batch 50%
+stage 1  step     0   real-train 4.786   synth 4.777   val 4.787   best 4.787@0   2s
+stage 1  step   200   real-train 2.247   synth 2.052   val 2.260   best 2.260@200   108s
+stage 1  step   400   real-train 1.956   synth 1.594   val 1.994   best 1.994@400   214s
+stage 1  step   600   real-train 1.802   synth 1.414   val 1.840   best 1.840@600   319s
+stage 1  step   800   real-train 1.706   synth 1.318   val 1.765   best 1.765@800   423s
+stage 1  step  1000   real-train 1.614   synth 1.253   val 1.716   best 1.716@1000   538s
+stage 1  step  1200   real-train 1.564   synth 1.203   val 1.680   best 1.680@1200   650s
+stage 1  step  1400   real-train 1.482   synth 1.164   val 1.652   best 1.652@1400   754s
+stage 1  step  1600   real-train 1.438   synth 1.131   val 1.640   best 1.640@1600   858s
+stage 1  step  1800   real-train 1.391   synth 1.095   val 1.618   best 1.618@1800   963s
+stage 1  step  2000   real-train 1.329   synth 1.070   val 1.608   best 1.608@2000   1067s
+stage 1  step  2200   real-train 1.280   synth 1.053   val 1.604   best 1.604@2200   1172s
+stage 1  step  2400   real-train 1.228   synth 1.032   val 1.610   best 1.604@2200   1276s
+stage 1  step  2600   real-train 1.171   synth 1.020   val 1.600   best 1.600@2600   1380s
+stage 1  step  2800   real-train 1.136   synth 1.004   val 1.602   best 1.600@2600   1485s
+stage 1  step  3000   real-train 1.088   synth 0.990   val 1.611   best 1.600@2600   1589s
+stage 1  step  3200   real-train 1.047   synth 0.983   val 1.612   best 1.600@2600   1694s
+stage 1  step  3400   real-train 1.001   synth 0.972   val 1.624   best 1.600@2600   1798s
+stage 1  step  3600   real-train 0.957   synth 0.960   val 1.627   best 1.600@2600   1903s
+stage 1  step  3800   real-train 0.924   synth 0.957   val 1.636   best 1.600@2600   2008s
+stage 1  step  4000   real-train 0.886   synth 0.945   val 1.645   best 1.600@2600   2112s
+stage 1  step  4200   real-train 0.854   synth 0.930   val 1.659   best 1.600@2600   2218s
+stage 1  step  4400   real-train 0.824   synth 0.928   val 1.663   best 1.600@2600   2337s
+stage 1  step  4600   real-train 0.792   synth 0.914   val 1.682   best 1.600@2600   2444s
+stage 1  step  4800   real-train 0.758   synth 0.914   val 1.697   best 1.600@2600   2548s
+stage 1  step  5000   real-train 0.742   synth 0.904   val 1.703   best 1.600@2600   2653s
+stage 1  step  5200   real-train 0.716   synth 0.901   val 1.712   best 1.600@2600   2757s
+stage 1  step  5400   real-train 0.703   synth 0.892   val 1.722   best 1.600@2600   2864s
+stage 1  step  5600   real-train 0.683   synth 0.887   val 1.729   best 1.600@2600   2969s
+stage 1  step  5800   real-train 0.675   synth 0.887   val 1.728   best 1.600@2600   3074s
+stage 1  step  6000   real-train 0.654   synth 0.883   val 1.738   best 1.600@2600   3180s
+stage 1  step  6200   real-train 0.642   synth 0.880   val 1.742   best 1.600@2600   3285s
+stage 1  step  6400   real-train 0.634   synth 0.876   val 1.752   best 1.600@2600   3404s
+stage 1  step  6600   real-train 0.622   synth 0.872   val 1.757   best 1.600@2600   3512s
+stage 1  step  6800   real-train 0.610   synth 0.871   val 1.766   best 1.600@2600   3616s
+stage 1  step  7000   real-train 0.603   synth 0.866   val 1.774   best 1.600@2600   3720s
+
+stage 1 best val 1.600 at step 2600
+
+stage 2  step     0   real-train 1.171   synth 1.020   val 1.600   best 1.600@0   3721s
+stage 2  step    50   real-train 1.110   synth 1.026   val 1.579   best 1.579@50   3748s
+stage 2  step   100   real-train 1.090   synth 1.028   val 1.579   best 1.579@50   3774s
+stage 2  step   150   real-train 1.077   synth 1.032   val 1.579   best 1.579@50   3801s
+stage 2  step   200   real-train 1.064   synth 1.038   val 1.583   best 1.579@50   3828s
+stage 2  step   250   real-train 1.056   synth 1.039   val 1.585   best 1.579@50   3855s
+stage 2  step   300   real-train 1.051   synth 1.040   val 1.585   best 1.579@50   3881s
+stage 2  step   350   real-train 1.048   synth 1.040   val 1.585   best 1.579@50   3908s
+stage 2  step   400   real-train 1.047   synth 1.041   val 1.585   best 1.579@50   3935s
+
+stage 2 best val 1.579 at step 50   (Lesson 7, real only, no tags: 1.660)
+
+300 samples (stage 2 model, temperature 0.8, random tags):
+  two-line doha shape: 98%
+  copy rate (5+ words from a real doha): 0%
+  rhythm: exact 10%   near 23%   (Lesson 7: exact 2%)
+  image hit: 73% of requested images appear   (a random other image: 1%)
+  device hit: 73%  (sadho / prashn / kahekabir cue word as requested; chance about 1/3)
+
+first 10:
+  [mrityu/naav/ulatbansi] near  नाव चली जल पर रहै, सुनि जग बिना जात। / पानी डूब न जानिये, मूरख माँगै जात॥
+  [dhairya/sui+tarazu/kahekabir] near  तराजू तौले सुई से, सब पाछे क्या होय। / कहै कबीर धीरज धर, हरि न लो पावे कोय॥
+  [ahankar/sui/ulatbansi] near  सुई का सागर सों जोड़, नाव चली उड़ाय। / भवसागर की डूब सब, बिरछ को भरम पाय॥
+  [vani/kasauti+hans/ulatbansi]        हंस कसौटी परखि के, मोती चुगै मोती। / मुख में कसि परखि नहीं, सो कागा सिर बुझ॥
+  [dhairya/koyal+kauwa/sadho]        साधो कौवा कोयल सम, कौवा जग का होय। / कोयल कूके बोल सम, सुरत बिगड़े पछताय॥
+  [prem/chakor/prashn] near  चकोर चंद को कौन जो, निवस भक्ति जग जाय। / प्रेम न बिकै जानिये, बहुत बिखावै आय॥
+  [guru/deepak/ulatbansi]        दीपक बारी जलै नाहिं, बार न जाने कोय। / बिन हाट बिकत जब सूखा, दीपक लौ न होय॥
+  [vani/chadar/ulatbansi]        सीवत चदरिये बोल में, सिला सीख सब जाय। / बिन मन का मैल ज्यों, मन ही का है जाय॥
+  [satsang/hans/kahekabir]        पतंग जल देखे न, सतगुरु लीजे हाथ। / कह कबीर संतों मिले, काल गल की फाँसि॥
+  [dhairya/charkha/sadho]        साधो धीरज धरि सब, चरखा चलै धीर। / साधो करघा चलै सदा, सुरति समय मेल फँस॥

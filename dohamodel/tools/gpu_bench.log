@@ -1,0 +1,7 @@
+== plain ==
+== HSA_OVERRIDE_GFX_VERSION=11.5.1 ==
+torch 2.14.1+rocm7.2   hip 7.2.53211   gpu available: True
+device: AMD Radeon 840M Graphics   arch: gfx1151
+cpu:  0.520 s/step   loss 4.727 -> 3.395
+gpu:  0.420 s/step   loss 4.734 -> 3.529   speedup 1.2x
+same start loss on both: False

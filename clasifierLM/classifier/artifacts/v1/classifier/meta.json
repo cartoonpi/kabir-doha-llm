@@ -1,0 +1,84 @@
+{
+  "format": "doha-tag-classifier/1",
+  "B": 16384,
+  "d": 32,
+  "hidden": false,
+  "int8": false,
+  "fnv": {
+    "offset_basis": 2166136261,
+    "prime": 16777619,
+    "bits": 32
+  },
+  "featurize": "lowercase; [^a-z0-9 ] -> space; split; '<w>' + char 3-grams of '<w>' (none if len(w)==1); fnv1a(utf8) % B",
+  "theme_ids": [
+    "guru",
+    "maya",
+    "mrityu",
+    "ahankar",
+    "pakhand",
+    "bhakti",
+    "vani",
+    "dhairya",
+    "satsang",
+    "prem",
+    "none"
+  ],
+  "image_ids": [
+    "deepak",
+    "kumhar",
+    "kuan",
+    "machhli",
+    "mala",
+    "chandan",
+    "patang",
+    "bazaar",
+    "naav",
+    "vriksh"
+  ],
+  "thresholds": {
+    "t_theme": 0.2,
+    "t_img": 0.6,
+    "max_images": 2
+  },
+  "arrays": {
+    "embedding": {
+      "offset": 0,
+      "shape": [
+        16384,
+        32
+      ],
+      "dtype": "float32"
+    },
+    "theme_W": {
+      "offset": 2097152,
+      "shape": [
+        11,
+        32
+      ],
+      "dtype": "float32"
+    },
+    "theme_b": {
+      "offset": 2098560,
+      "shape": [
+        11
+      ],
+      "dtype": "float32"
+    },
+    "image_W": {
+      "offset": 2098604,
+      "shape": [
+        10,
+        32
+      ],
+      "dtype": "float32"
+    },
+    "image_b": {
+      "offset": 2099884,
+      "shape": [
+        10
+      ],
+      "dtype": "float32"
+    }
+  },
+  "exported": "2026-10-19T23:56:43"
+}

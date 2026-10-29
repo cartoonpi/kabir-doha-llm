@@ -1,0 +1,16 @@
+{
+  "fasttext": {
+    "t_theme": 0.2,
+    "t_img": 0.6,
+    "max_images": 2,
+    "val_theme_macroF1": 0.8295,
+    "val_image_microF1": 0.973
+  },
+  "logreg": {
+    "t_theme": 0.2,
+    "t_img": 0.3,
+    "max_images": 2,
+    "val_theme_macroF1": 0.8328,
+    "val_image_microF1": 0.9862
+  }
+}

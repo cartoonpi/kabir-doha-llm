@@ -1,0 +1,47 @@
+vocab 109 (64 chars + | + 44 tags)   parameters 1,818,624
+real train 1,731 dohe   synthetic 0   tokens 133,788   params per token 13.6   real share of each batch 100%
+stage 1  step     0   real-train 4.786   val 4.787   best 4.787@0   1s
+stage 1  step   200   real-train 2.208   val 2.225   best 2.225@200   114s
+stage 1  step   400   real-train 1.884   val 1.935   best 1.935@400   222s
+stage 1  step   600   real-train 1.728   val 1.802   best 1.802@600   333s
+stage 1  step   800   real-train 1.593   val 1.715   best 1.715@800   451s
+stage 1  step  1000   real-train 1.477   val 1.681   best 1.681@1000   557s
+stage 1  step  1200   real-train 1.364   val 1.646   best 1.646@1200   663s
+stage 1  step  1400   real-train 1.237   val 1.648   best 1.646@1200   768s
+stage 1  step  1600   real-train 1.134   val 1.654   best 1.646@1200   873s
+stage 1  step  1800   real-train 1.037   val 1.673   best 1.646@1200   978s
+stage 1  step  2000   real-train 0.941   val 1.699   best 1.646@1200   1084s
+stage 1  step  2200   real-train 0.870   val 1.732   best 1.646@1200   1192s
+stage 1  step  2400   real-train 0.809   val 1.754   best 1.646@1200   1303s
+stage 1  step  2600   real-train 0.760   val 1.774   best 1.646@1200   1424s
+stage 1  step  2800   real-train 0.724   val 1.792   best 1.646@1200   1531s
+stage 1  step  3000   real-train 0.702   val 1.809   best 1.646@1200   1647s
+
+stage 1 best val 1.646 at step 1200
+
+stage 2  step     0   real-train 1.364   val 1.646   best 1.646@0   1648s
+stage 2  step    50   real-train 1.311   val 1.627   best 1.627@50   1681s
+stage 2  step   100   real-train 1.296   val 1.624   best 1.624@100   1711s
+stage 2  step   150   real-train 1.288   val 1.624   best 1.624@150   1740s
+stage 2  step   200   real-train 1.285   val 1.622   best 1.622@200   1769s
+
+stage 2 best val 1.622 at step 200   (Lesson 7, real only, no tags: 1.660)
+
+300 samples (stage 2 model, temperature 0.8, random tags):
+  two-line doha shape: 98%
+  copy rate (5+ words from a real doha): 0%
+  rhythm: exact 3%   near 11%   (Lesson 7: exact 2%)
+  image hit: 1% of requested images appear   (a random other image: 0%)
+  device hit: 34%  (sadho / prashn / kahekabir cue word as requested; chance about 1/3)
+
+first 10:
+  [mrityu/naav/ulatbansi]        काँचा से नहिं जरै, सुनहिं बहुतक देह। / साँच सत्तनाम की, सार नरक हसा होन॥
+  [dhairya/sui+tarazu/kahekabir]        कबीर पहरे प्रगटे, केसे पहुँचे संग। / कहेँ कबीर बिचारिये, जहाँ न लहरिजन काम॥
+  [ahankar/sui/ulatbansi] near  नारि का साईं रहा, साई मन के कोय। / राख के साँचा आगिने, साहिब से हरि होय॥
+  [vani/kasauti+hans/ulatbansi]        चोटी पियारी बातिया, कोटि बिषया माहि। / मुआ ते से चाहिये, पहुँचे जरा बाहि॥
+  [dhairya/koyal+kauwa/sadho] exact  मुख में वा परिचय नहीं, मुख जो कछु के मोहि। / कह कबीर वा देह तें, उलटे देहु समाय॥
+  [prem/chakor/prashn]        कबीर कसंगति साधुन, ता के सेवक नाहिं। / कह कबीर बिचारि के, कहै कबीर साहि॥
+  [guru/deepak/ulatbansi]        अब कमानी का गम नहीं, जे बाती क्रोधी बाट। / मेरा घड़ी के बासना, कहावन ले न जाय॥
+  [vani/chadar/ulatbansi]        सीप सीस न कोइला, ज्यों कोइ बच्छ संसार। / सतगुरु बानी गुरु लिया, हरिया हरिजन वार॥
+  [satsang/hans/kahekabir]        कबीर दरिया फूलता, भावे बाहर जारि। / तेज पावे के कदेवइया, लागे मारे नाहिं॥
+  [dhairya/charkha/sadho]        कबीर समुद्र में बापरे, से अनेक में पाय। / सिर नरक ते कछु नहीं, जे मन करे पाइयार॥

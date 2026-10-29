@@ -1,0 +1,59 @@
+vocab 109 (64 chars + | + 44 tags)   parameters 3,211,264
+real train 1,731 dohe   synthetic 4,941   tokens 522,025   params per token 6.2   real share of each batch 50%
+stage 1  step     0   real-train 4.790   synth 4.794   val 4.781   best 4.781@0   3s
+stage 1  step   200   real-train 2.227   synth 2.017   val 2.238   best 2.238@200   48s
+stage 1  step   400   real-train 1.963   synth 1.602   val 1.993   best 1.993@400   91s
+stage 1  step   600   real-train 1.820   synth 1.436   val 1.851   best 1.851@600   135s
+stage 1  step   800   real-train 1.739   synth 1.352   val 1.801   best 1.801@800   180s
+stage 1  step  1000   real-train 1.667   synth 1.273   val 1.756   best 1.756@1000   223s
+stage 1  step  1200   real-train 1.603   synth 1.232   val 1.712   best 1.712@1200   267s
+stage 1  step  1400   real-train 1.534   synth 1.174   val 1.685   best 1.685@1400   310s
+stage 1  step  1600   real-train 1.491   synth 1.151   val 1.661   best 1.661@1600   354s
+stage 1  step  1800   real-train 1.435   synth 1.114   val 1.646   best 1.646@1800   398s
+stage 1  step  2000   real-train 1.383   synth 1.092   val 1.629   best 1.629@2000   441s
+stage 1  step  2200   real-train 1.328   synth 1.073   val 1.622   best 1.622@2200   485s
+stage 1  step  2400   real-train 1.295   synth 1.055   val 1.621   best 1.621@2400   528s
+stage 1  step  2600   real-train 1.243   synth 1.036   val 1.614   best 1.614@2600   572s
+stage 1  step  2800   real-train 1.201   synth 1.024   val 1.607   best 1.607@2800   617s
+stage 1  step  3000   real-train 1.172   synth 1.008   val 1.613   best 1.607@2800   658s
+stage 1  step  3200   real-train 1.118   synth 0.991   val 1.612   best 1.607@2800   700s
+stage 1  step  3400   real-train 1.085   synth 0.982   val 1.610   best 1.607@2800   742s
+stage 1  step  3600   real-train 1.057   synth 0.974   val 1.614   best 1.607@2800   784s
+stage 1  step  3800   real-train 1.030   synth 0.964   val 1.614   best 1.607@2800   826s
+stage 1  step  4000   real-train 1.001   synth 0.955   val 1.618   best 1.607@2800   868s
+stage 1  step  4200   real-train 0.976   synth 0.948   val 1.625   best 1.607@2800   910s
+stage 1  step  4400   real-train 0.956   synth 0.947   val 1.632   best 1.607@2800   951s
+stage 1  step  4600   real-train 0.942   synth 0.940   val 1.628   best 1.607@2800   993s
+stage 1  step  4800   real-train 0.922   synth 0.940   val 1.630   best 1.607@2800   1039s
+stage 1  step  5000   real-train 0.909   synth 0.936   val 1.637   best 1.607@2800   1082s
+
+stage 1 best val 1.607 at step 2800
+
+stage 2  step     0   real-train 1.201   synth 1.024   val 1.607   best 1.607@0   1084s
+stage 2  step    50   real-train 1.147   synth 1.036   val 1.589   best 1.589@50   1097s
+stage 2  step   100   real-train 1.130   synth 1.041   val 1.589   best 1.589@50   1109s
+stage 2  step   150   real-train 1.119   synth 1.044   val 1.589   best 1.589@150   1121s
+stage 2  step   200   real-train 1.114   synth 1.046   val 1.588   best 1.588@200   1134s
+stage 2  step   250   real-train 1.111   synth 1.047   val 1.589   best 1.588@200   1146s
+stage 2  step   300   real-train 1.108   synth 1.048   val 1.589   best 1.588@200   1158s
+
+stage 2 best val 1.588 at step 200   (Lesson 7, real only, no tags: 1.660)
+
+300 samples (stage 2 model, temperature 0.8, random tags):
+  two-line doha shape: 100%
+  copy rate (5+ words from a real doha): 0%
+  rhythm: exact 9%   near 23%   (Lesson 7: exact 2%)
+  image hit: 72% of requested images appear   (a random other image: 1%)
+  device hit: 68%  (sadho / prashn / kahekabir cue word as requested; chance about 1/3)
+
+first 10:
+  [mrityu/naav/ulatbansi]        नाव चली चले रुख ऊपजै, हिय बिनु पार लाय। / सुनत सूखे अंगार में, फल जग भी मिलि जाय॥
+  [dhairya/sui+tarazu/kahekabir] near  धीरज धर तराजू पर, कहै कबीर सुजान। / कौन परखै जो जोवता, सत्य जन का नाम॥
+  [ahankar/sui/ulatbansi]        सुई सागर सीवै सम, टूटि गाँठ पराय। / भीतर हरि उठि जानो, बाहर अंग न जाय॥
+  [vani/kasauti+hans/ulatbansi]        कसौटी पर सोना कसत, मोती चुगै मोती। / मुख सोना जानि के, प्रेमी जरत बिन नीर॥
+  [dhairya/koyal+kauwa/sadho] near  कागा कोयल एक सि, कौआ कोयल जान। / कहै कबीर सुन मन ले, धीरज धर सब जान॥
+  [prem/chakor/prashn]        चकोर चंदा ताके निहारे, जो देखै जो सोय। / मरने प्रेम जब जब लगे, मुख कहाँ में होय॥
+  [guru/deepak/ulatbansi] near  दीपक जले दीपक जलै, तो जलत ज्यों बिनु पार। / गुरु बिना कौन जानहों, जरि लौ बिना सार॥
+  [vani/chadar/ulatbansi]        बानी बानी तो बोलिये, चादर ओढ़ै सार। / धीरे धीरे धीरज धरि, मन ही होवै सार॥
+  [satsang/hans/kahekabir]        मंत्र में पिउ कीजिये, पंथित नहिं करि जाय। / कह कबीर कलिजग रहा, सर्प समुनि लजाय॥
+  [dhairya/charkha/sadho]        साधो चरखा चलत हाथ सों, सूत सहज की होय। / पाखंड सुमिरन माला, फेरत न कोई कोय॥

@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cleanup Spot Check</title>
+<!--
+  Spot-check the Haiku OCR cleanup. Loads ../data/cleanup/review_<name>.json (written by
+  data_prep/review_sample.py). Open http://localhost:8000/dohamodel/web/review.html?set=gurudev
+  Verdicts are kept in this browser; "Download verdicts" saves them as a JSON file.
+-->
+<style>
+  :root {
+    --bg: #f7f5f0; --card: #ffffff; --text: #1f1d1a; --muted: #6b665d; --line: #e4e0d6;
+    --accent: #b5532a; --accent-soft: #f3e3d9; --ok: #2e7d4f; --bad: #c0392b; --unsure: #a07a12; --del: #f6d5cf; --ins: #d4ecd9;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #161513; --card: #201e1b; --text: #ece8e1; --muted: #a39d92; --line: #35322d;
+      --accent: #e58a5c; --accent-soft: #3a2a20; --ok: #6cc28f; --bad: #ef7d6e; --unsure: #e0b84f; --del: #5a2a24; --ins: #23472f;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 860px; margin: 0 auto; padding: 32px 16px 64px; }
+  h1 { font-size: 1.6rem; margin: 0 0 4px; }
+  .sub, .hint, .label { color: var(--muted); }
+  .sub { margin: 0 0 16px; }
+  .bar { position: sticky; top: 0; background: var(--bg); padding: 10px 0; display: flex; flex-wrap: wrap; gap: 10px 16px;
+    align-items: center; border-bottom: 1px solid var(--line); margin-bottom: 16px; z-index: 1; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; margin-bottom: 14px; }
+  .card.ok { border-left: 5px solid var(--ok); } .card.bad { border-left: 5px solid var(--bad); } .card.unsure { border-left: 5px solid var(--unsure); }
+  .head { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; font-size: .85rem; color: var(--muted); }
+  .pill { border-radius: 999px; padding: 1px 10px; background: var(--accent-soft); color: var(--text); margin-left: 6px; }
+  .final { font-size: 1.3rem; line-height: 1.8; white-space: pre-wrap; margin: 8px 0; }
+  .grid { display: grid; grid-template-columns: 70px 1fr; gap: 2px 12px; font-size: 1rem; line-height: 1.7; }
+  .grid .label { font-size: .8rem; padding-top: 3px; }
+  .src { white-space: pre-wrap; }
+  del { background: var(--del); text-decoration: none; border-radius: 3px; }
+  ins { background: var(--ins); text-decoration: none; border-radius: 3px; }
+  ul { margin: 6px 0 0; padding-left: 20px; font-size: .9rem; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 12px; }
+  button { border: 1px solid var(--line); background: var(--bg); color: var(--text); border-radius: 999px; padding: 5px 14px; font: inherit; font-size: .9rem; cursor: pointer; }
+  button[aria-pressed="true"].v-ok { background: var(--ok); border-color: var(--ok); color: #fff; }
+  button[aria-pressed="true"].v-bad { background: var(--bad); border-color: var(--bad); color: #fff; }
+  button[aria-pressed="true"].v-unsure { background: var(--unsure); border-color: var(--unsure); color: #fff; }
+  .primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  input[type=text] { flex: 1; min-width: 200px; padding: 6px 10px; font: inherit; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; }
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Cleanup spot check</h1>
+  <p class="sub">For each doha: open the scan (the link searches inside the 1926 book and jumps to the page), compare it with
+    Haiku's text, then mark it. <b>Correct</b> = matches the printed page. <b>Wrong</b> = any word differs (write the fix in the note).</p>
+  <div class="bar">
+    <span id="progress">–</span>
+    <button class="primary" id="dl">Download verdicts</button>
+    <span class="hint">Saved in this browser as you go.</span>
+  </div>
+  <div id="list"></div>
+</main>
+<script>
+const set = new URLSearchParams(location.search).get("set") || "gurudev";
+const KEY = "review:" + set;
+const $ = (id) => document.getElementById(id);
+let verdicts = {};
+try { verdicts = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(verdicts)); } catch {} progress(); };
+let rows = [];
+function progress() {
+  const v = Object.values(verdicts), c = (k) => v.filter((x) => x.v === k).length;
+  $("progress").textContent = `${v.filter((x) => x.v).length} / ${rows.length} checked · ${c("ok")} correct · ${c("bad")} wrong · ${c("unsure")} unsure`;
+}
+const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+
+// character diff (LCS) between an OCR copy and the final text, for highlighting
+function diff(a, b) {
+  a = [...a]; b = [...b];
+  const m = a.length, n = b.length, L = Array.from({ length: m + 1 }, () => new Int16Array(n + 1));
+  for (let i = m - 1; i >= 0; i--) for (let j = n - 1; j >= 0; j--) L[i][j] = a[i] === b[j] ? L[i + 1][j + 1] + 1 : Math.max(L[i + 1][j], L[i][j + 1]);
+  let i = 0, j = 0, out = "";
+  while (i < m || j < n) {
+    if (i < m && j < n && a[i] === b[j]) { out += esc(a[i]); i++; j++; }
+    else if (j < n && (i === m || L[i][j + 1] >= L[i + 1][j])) { out += `<ins>${esc(b[j])}</ins>`; j++; }
+    else { out += `<del>${esc(a[i])}</del>`; i++; }
+  }
+  return out;
+}
+
+function render() {
+  $("list").replaceChildren();
+  for (const r of rows) {
+    const v = verdicts[r.i] || {};
+    const card = document.createElement("div"); card.className = "card " + (v.v || "");
+    const q = encodeURIComponent(r.search_word);
+    card.innerHTML = `
+      <div class="head"><span>#${r.i} · verse ${r.num ?? "?"} · basis ${r.basis}<span class="pill">${r.confidence}</span></span>
+        <a href="https://archive.org/details/in.ernet.dli.2015.342092/mode/1up?q=${q}" target="_blank" rel="noopener">open scan (search “${esc(r.search_word)}”) ↗</a></div>
+      <div class="final">${esc(r.text)}</div>
+      <div class="grid">
+        <div class="label">1926 OCR</div><div class="src">${diff(r.copy_1926, r.text)}</div>
+        ${r.copy_1912 ? `<div class="label">1912 OCR</div><div class="src">${diff(r.copy_1912, r.text)}</div>` : ""}
+      </div>
+      ${r.changes.length ? `<ul>${r.changes.map((c) => `<li>${esc(c)}</li>`).join("")}</ul>` : ""}
+      ${r.note ? `<p class="hint" style="margin:6px 0 0">Haiku: ${esc(r.note)}</p>` : ""}
+      <div class="row">
+        <button class="v-ok">Correct</button><button class="v-bad">Wrong</button><button class="v-unsure">Unsure</button>
+        <input type="text" placeholder="note / correct reading" value="${esc(v.note || "")}">
+      </div>`;
+    const [bOk, bBad, bUn] = card.querySelectorAll("button"), note = card.querySelector("input");
+    for (const [b, k] of [[bOk, "ok"], [bBad, "bad"], [bUn, "unsure"]]) {
+      b.setAttribute("aria-pressed", v.v === k);
+      b.onclick = () => { verdicts[r.i] = { ...(verdicts[r.i] || {}), v: k }; save(); render(); };
+    }
+    note.onchange = () => { verdicts[r.i] = { ...(verdicts[r.i] || {}), note: note.value }; save(); };
+    $("list").append(card);
+  }
+  progress();
+}
+
+$("dl").onclick = () => {
+  const blob = new Blob([JSON.stringify({ set, verdicts }, null, 1)], { type: "application/json" });
+  const a = Object.assign(document.createElement("a"), { href: URL.createObjectURL(blob), download: `verdicts_${set}.json` });
+  a.click();
+};
+
+fetch(`../data/cleanup/review_${set}.json`).then((r) => r.json()).then((d) => { rows = d; render(); })
+  .catch((e) => { $("list").innerHTML = `<p style="color:var(--bad)">Could not load review_${set}.json: ${esc(e.message)}</p>`; });
+</script>
+</body>
+</html>

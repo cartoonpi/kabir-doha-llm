@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Synthetic Pilot Review</title>
+<!--
+  Blind review of the synthetic pilot (data/synth/pilot/scored.jsonl, written by data_prep/synth_pilot.py score).
+  Shows 20 dohe the filter kept and 10 it rejected for meter, shuffled, with the filter's verdict hidden until
+  you rate each one. Open http://localhost:8000/dohamodel/web/synth_review.html
+  Ratings are kept in this browser; "Download ratings" saves them as a JSON file.
+-->
+<style>
+  :root {
+    --bg: #f7f5f0; --card: #ffffff; --text: #1f1d1a; --muted: #6b665d; --line: #e4e0d6;
+    --accent: #b5532a; --accent-soft: #f3e3d9; --ok: #2e7d4f; --bad: #c0392b; --mid: #a07a12;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #161513; --card: #201e1b; --text: #ece8e1; --muted: #a39d92; --line: #35322d;
+      --accent: #e58a5c; --accent-soft: #3a2a20; --ok: #6cc28f; --bad: #ef7d6e; --mid: #e0b84f;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 860px; margin: 0 auto; padding: 32px 16px 64px; }
+  h1 { font-size: 1.6rem; margin: 0 0 4px; }
+  .sub, .hint, .label { color: var(--muted); }
+  .sub { margin: 0 0 16px; }
+  .bar { position: sticky; top: 0; background: var(--bg); padding: 10px 0; display: flex; flex-wrap: wrap; gap: 10px 16px;
+    align-items: center; border-bottom: 1px solid var(--line); margin-bottom: 16px; z-index: 1; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; margin-bottom: 14px; }
+  .card.keep { border-left: 5px solid var(--ok); } .card.reject { border-left: 5px solid var(--bad); }
+  .head { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; font-size: .85rem; color: var(--muted); }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 0; }
+  .pill { border-radius: 999px; padding: 1px 10px; background: var(--accent-soft); font-size: .85rem; }
+  .doha { font-size: 1.35rem; line-height: 1.8; white-space: pre-wrap; margin: 10px 0; }
+  .q { display: grid; grid-template-columns: 150px 1fr; gap: 6px 12px; align-items: center; font-size: .9rem; }
+  .opts { display: flex; gap: 6px; flex-wrap: wrap; }
+  button { border: 1px solid var(--line); background: var(--bg); color: var(--text); border-radius: 999px; padding: 4px 12px; font: inherit; font-size: .88rem; cursor: pointer; }
+  button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+  button[aria-pressed="true"].good { background: var(--ok); border-color: var(--ok); }
+  button[aria-pressed="true"].bad { background: var(--bad); border-color: var(--bad); }
+  button[aria-pressed="true"].mid { background: var(--mid); border-color: var(--mid); }
+  .primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  input[type=text] { width: 100%; padding: 6px 10px; font: inherit; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; margin-top: 10px; }
+  .reveal { margin-top: 12px; padding: 10px 12px; border-radius: 8px; background: var(--bg); font-size: .9rem; }
+  .reveal b.kept { color: var(--ok); } .reveal b.meter { color: var(--bad); }
+  .off { color: var(--bad); font-weight: 600; }
+  table { border-collapse: collapse; margin-top: 8px; font-size: .95rem; }
+  td, th { border: 1px solid var(--line); padding: 4px 12px; text-align: center; }
+  #summary { display: none; }
+  @media (max-width: 560px) { .q { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>Synthetic pilot review</h1>
+  <p class="sub">30 Haiku dohe in random order: 20 the filter <b>kept</b> and 10 it <b>rejected for meter</b>. The filter's verdict is hidden
+    until you give your overall verdict, so you judge by ear first. Read each one aloud.</p>
+  <div class="bar">
+    <span id="progress">–</span>
+    <button class="primary" id="dl">Download ratings</button>
+    <span class="hint">Saved in this browser as you go.</span>
+  </div>
+  <div class="card" id="summary"></div>
+  <div id="list"></div>
+</main>
+<script>
+const KEY = "synth_review:pilot";
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
+let ratings = {};
+try { ratings = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(ratings)); } catch {} progress(); };
+
+const QUESTIONS = [
+  ["voice", "Sounds like Kabir?", [["yes", "good"], ["somewhat", "mid"], ["no / modern", "bad"]]],
+  ["theme", "About the theme?", [["yes", "good"], ["loosely", "mid"], ["no", "bad"]]],
+  ["images", "Images used well?", [["yes", "good"], ["forced", "mid"], ["wrong meaning", "bad"]]],
+  ["meaning", "Makes sense?", [["clear", "good"], ["vague", "mid"], ["nonsense", "bad"]]],
+  ["overall", "Overall: train on it?", [["keep", "good"], ["reject", "bad"]]],
+];
+
+// deterministic sample: 20 kept + 10 meter fails, shuffled (mulberry32, seed 7)
+function rng(a) { return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function shuffle(xs, r) { xs = [...xs]; for (let i = xs.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [xs[i], xs[j]] = [xs[j], xs[i]]; } return xs; }
+
+let rows = [];
+function progress() {
+  const done = rows.filter((r) => ratings[r.rid]?.overall).length;
+  $("progress").textContent = `${done} / ${rows.length} rated`;
+  if (done === rows.length && rows.length) summary();
+}
+
+function halvesText(r) {
+  const t = [13, 11, 13, 11];
+  const h = r.halves.map(([lo, hi], k) => {
+    const s = lo === hi ? `${lo}` : `${lo}–${hi}`;
+    return lo <= t[k] && t[k] <= hi ? s : `<span class="off">${s}</span>`;
+  });
+  return `${h[0]} + ${h[1]} &nbsp;/&nbsp; ${h[2]} + ${h[3]}`;
+}
+
+function render() {
+  $("list").replaceChildren();
+  rows.forEach((r, n) => {
+    const v = ratings[r.rid] || {};
+    const card = document.createElement("div");
+    card.className = "card " + (v.overall || "");
+    card.innerHTML = `
+      <div class="head"><span>${n + 1} of ${rows.length} · request ${r.rid}</span></div>
+      <div class="tags">
+        <span class="pill" title="${esc(r.theme_desc)}">theme: ${esc(r.theme_desc.split(":")[0])}</span>
+        ${r.images.map((i) => `<span class="pill">image: ${esc(i.name)}</span>`).join("")}
+        <span class="pill" title="${esc(r.device_desc)}">device: ${esc(r.device_desc.split(":")[0].split(" (")[0])}</span>
+      </div>
+      <div class="hint" style="font-size:.85rem;margin-top:4px">${esc(r.theme_desc)}</div>
+      <div class="doha">${esc(r.text)}</div>
+      <div class="q"></div>
+      <input type="text" placeholder="note (e.g. heron should mean hypocrite, weak rhyme, modern word …)" value="${esc(v.note || "")}">
+      ${v.overall ? `<div class="reveal">Filter: <b class="${r.verdict}">${r.verdict === "kept" ? "kept" : "rejected (meter)"}</b>
+        · matras per half: ${halvesText(r)} <span class="hint">(target 13 + 11 / 13 + 11)</span>
+        · ${(v.overall === "keep") === (r.verdict === "kept") ? "you agree" : "<b>you disagree</b>"}</div>` : ""}`;
+    const q = card.querySelector(".q");
+    for (const [key, label, opts] of QUESTIONS) {
+      const lab = document.createElement("div"); lab.className = "label"; lab.textContent = label;
+      const box = document.createElement("div"); box.className = "opts";
+      for (const [o, cls] of opts) {
+        const b = document.createElement("button"); b.textContent = o; b.className = cls;
+        const val = key === "overall" ? (o === "keep" ? "keep" : "reject") : o;
+        b.setAttribute("aria-pressed", v[key] === val);
+        b.onclick = () => { ratings[r.rid] = { ...(ratings[r.rid] || {}), [key]: val }; save(); render(); };
+        box.append(b);
+      }
+      q.append(lab, box);
+    }
+    const note = card.querySelector("input");
+    note.onchange = () => { ratings[r.rid] = { ...(ratings[r.rid] || {}), note: note.value }; save(); };
+    $("list").append(card);
+  });
+  progress();
+}
+
+function summary() {
+  const c = { kk: 0, kr: 0, rk: 0, rr: 0 };
+  for (const r of rows) {
+    const you = ratings[r.rid].overall === "keep" ? "k" : "r", filt = r.verdict === "kept" ? "k" : "r";
+    c[filt + you]++;
+  }
+  const counts = (key) => {
+    const m = {};
+    for (const r of rows) { const x = ratings[r.rid]?.[key]; if (x) m[x] = (m[x] || 0) + 1; }
+    return Object.entries(m).map(([k, n]) => `${esc(k)} ${n}`).join(" · ");
+  };
+  const s = $("summary");
+  s.style.display = "block";
+  s.innerHTML = `<b>All rated.</b> You vs the filter:
+    <table><tr><th></th><th>you: keep</th><th>you: reject</th></tr>
+      <tr><th>filter kept (20)</th><td>${c.kk}</td><td>${c.kr}</td></tr>
+      <tr><th>filter rejected (10)</th><td>${c.rk}</td><td>${c.rr}</td></tr></table>
+    <p class="hint" style="margin:8px 0 0">Top-right = dohe the meter passes but you would not train on (what the filter misses).
+      Bottom-left = good dohe lost to the meter check.</p>
+    <p style="margin:8px 0 0;font-size:.9rem">Voice: ${counts("voice")}<br>Theme: ${counts("theme")}<br>Images: ${counts("images")}<br>Meaning: ${counts("meaning")}</p>
+    <p class="hint" style="margin:8px 0 0">Download the ratings and save them in the dohellm folder, as with the Gurudev check.</p>`;
+}
+
+$("dl").onclick = () => {
+  const out = rows.map((r) => ({ rid: r.rid, filter: r.verdict, ...(ratings[r.rid] || {}) }));
+  const blob = new Blob([JSON.stringify({ set: "synth_pilot", ratings: out }, null, 1)], { type: "application/json" });
+  const a = Object.assign(document.createElement("a"), { href: URL.createObjectURL(blob), download: "ratings_synth_pilot.json" });
+  a.click();
+};
+
+fetch("../data/synth/pilot/scored.jsonl").then((r) => r.text()).then((t) => {
+  const all = t.trim().split("\n").map((l) => JSON.parse(l));
+  const r = rng(7);
+  const kept = shuffle(all.filter((x) => x.verdict === "kept"), r).slice(0, 20);
+  const meter = shuffle(all.filter((x) => x.verdict === "meter"), r).slice(0, 10);
+  rows = shuffle([...kept, ...meter], r);
+  render();
+}).catch((e) => { $("list").innerHTML = `<p style="color:var(--bad)">Could not load scored.jsonl: ${esc(e.message)}</p>`; });
+</script>
+</body>
+</html>

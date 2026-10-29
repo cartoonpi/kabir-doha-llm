@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Doha Generator Loop</title>
+<!--
+  The full PRD loop in the browser:  English request -> classifier (the other agent's fastText model)
+  -> tags -> tag-steered doha model (Lesson 8) -> generate-and-filter with the matra checker.
+  Everything runs locally; serve dohellm/ with python -m http.server 8000 and open
+  http://localhost:8000/dohamodel/web/steer.html
+-->
+<style>
+  :root {
+    --bg: #f7f5f0; --card: #ffffff; --text: #1f1d1a; --muted: #6b665d; --line: #e4e0d6;
+    --accent: #b5532a; --accent-soft: #f3e3d9; --bar: #c9a27e; --ok: #2e7d4f; --near: #a07a12; --bad: #c0392b;
+    --copy: #f4d77a;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #161513; --card: #201e1b; --text: #ece8e1; --muted: #a39d92; --line: #35322d;
+      --accent: #e58a5c; --accent-soft: #3a2a20; --bar: #7d6450; --ok: #6cc28f; --near: #e0b84f; --bad: #ef7d6e;
+      --copy: #6b5a1e;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 900px; margin: 0 auto; padding: 28px 16px 64px; }
+  h1 { font-size: 1.6rem; margin: 0 0 4px; }
+  h2 { font-size: 1rem; margin: 0 0 10px; display: flex; gap: 8px; align-items: baseline; }
+  h2 .n { background: var(--accent); color: #fff; border-radius: 999px; padding: 0 9px; font-size: .85rem; }
+  .sub, .hint, .muted { color: var(--muted); }
+  .hint { font-size: .85rem; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; margin-bottom: 14px; }
+  textarea { width: 100%; min-height: 64px; padding: 10px; font: inherit; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; resize: vertical; }
+  button, select { border: 1px solid var(--line); background: var(--bg); color: var(--text); border-radius: 999px; padding: 5px 14px; font: inherit; font-size: .9rem; cursor: pointer; }
+  select { border-radius: 8px; padding: 4px 8px; }
+  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; padding: 7px 20px; }
+  button:disabled { opacity: .5; cursor: default; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 10px; }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .chip { border-radius: 999px; padding: 2px 10px; font-size: .85rem; }
+  .tagline { font-family: ui-monospace, monospace; background: var(--accent-soft); border-radius: 8px; padding: 6px 10px; margin-top: 10px; word-break: break-all; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 640px) { .grid2 { grid-template-columns: 1fr; } }
+  .bar { display: grid; grid-template-columns: 130px 1fr 44px; gap: 6px; align-items: center; font-size: .82rem; margin: 2px 0; }
+  .bar .track { background: var(--bg); border-radius: 4px; height: 10px; position: relative; overflow: hidden; }
+  .bar .fill { background: var(--bar); height: 100%; }
+  .bar.sel .fill { background: var(--accent); }
+  .bar.sel { font-weight: 600; }
+  .unknown { opacity: .5; }
+  .winner { font-size: 1.45rem; line-height: 1.8; white-space: pre-wrap; margin: 6px 0; }
+  .badge { border-radius: 999px; padding: 0 8px; font-size: .78rem; color: #fff; white-space: nowrap; }
+  .b-exact { background: var(--ok); } .b-near { background: var(--near); } .b-fail { background: var(--bad); }
+  .b-img { background: var(--accent); }
+  .cand { display: grid; grid-template-columns: 34px 1fr auto; gap: 8px; padding: 6px 0; border-top: 1px solid var(--line); font-size: .95rem; }
+  .cand .t { white-space: pre-wrap; }
+  .cand .m { font-size: .78rem; color: var(--muted); text-align: right; }
+  .off { color: var(--bad); font-weight: 600; }
+  mark { background: var(--copy); color: inherit; border-radius: 3px; }
+  .stat { font-size: .85rem; }
+  a { color: var(--accent); }
+  label { font-size: .9rem; }
+  main { max-width: 1280px; }
+  .mrow { display: grid; grid-template-columns: 22px 230px 1fr; gap: 8px; align-items: center; padding: 4px 0; border-top: 1px solid var(--line); font-size: .88rem; }
+  .mrow:first-child { border-top: 0; }
+  .mrow .st { color: var(--muted); font-size: .82rem; }
+  .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 12px; margin-top: 12px; }
+  .col { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: var(--bg); min-width: 0; }
+  .col h3 { font-size: .95rem; margin: 0 0 2px; }
+  .col .prog { font-size: .8rem; color: var(--muted); margin-bottom: 6px; }
+  .keep { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; margin-bottom: 8px; }
+  .keep .winner { font-size: 1.15rem; margin: 2px 0 4px; }
+  .keep .meta { font-size: .78rem; color: var(--muted); }
+  details { margin-top: 6px; font-size: .85rem; }
+  details .cand { grid-template-columns: 30px 1fr; }
+  details .cand .m { grid-column: 2; text-align: left; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Doha generator: the full loop</h1>
+  <p class="sub">English request → <b>classifier</b> picks tags → <b>tag-steered model</b> writes dohe → <b>matra checker</b> keeps the first one that scans.
+    Everything runs in your browser. <a href="./">Playground</a> · <a href="../../">Home</a></p>
+
+  <div class="card">
+    <h2>Doha models <span class="hint">(tick one or more: every ticked model gets the same tags, side by side)</span></h2>
+    <div id="models"></div>
+    <div class="hint" id="clfStat" style="margin-top:8px">Loading classifier…</div>
+  </div>
+
+  <div class="card">
+    <h2><span class="n">1</span> Your request (English)</h2>
+    <textarea id="req" placeholder="e.g. a doha about pride, using the image of a lamp">a doha about pride and ego, using the image of a lamp</textarea>
+    <div class="chips" id="examples"></div>
+    <div class="row"><button class="primary" id="go">Match tags</button></div>
+  </div>
+
+  <div class="card" id="step2" hidden>
+    <h2><span class="n">2</span> Classifier → tags <span class="hint">(edit any tag before generating)</span></h2>
+    <div class="hint" id="clfNote"></div>
+    <div class="grid2" style="margin-top:8px">
+      <div><div class="hint">Theme: the model knows 10 (classifier probabilities, renormalized over those 10)</div><div id="themeBars"></div></div>
+      <div><div class="hint">Images: classifier's top picks (only the first 30 are in the model's vocabulary)</div><div id="imgBars"></div></div>
+    </div>
+    <div class="row">
+      <label>Theme <select id="theme"></select></label>
+      <label>Image 1 <select id="img1"></select></label>
+      <label>Image 2 <select id="img2"></select></label>
+      <label>Device <select id="device"></select></label>
+    </div>
+    <div class="tagline" id="tagline"></div>
+    <div class="hint" style="margin-top:6px">The classifier does not predict a device (how the doha speaks), so it is chosen here: "random" picks one per Generate click, the same for every model.</div>
+  </div>
+
+  <div class="card" id="step3" hidden>
+    <h2><span class="n">3</span> Generate and filter</h2>
+    <div class="row" style="margin-top:0">
+      <label>Temperature <input type="range" id="temp" min="0.4" max="1.2" step="0.05" value="0.8"> <span id="tempV">0.80</span></label>
+      <label>Accept <select id="accept"><option value="exact">exact 13+11 only</option><option value="near" selected>exact or near (one half ±1)</option></select></label>
+      <label>Dohe per model <select id="keep"><option selected>1</option><option>3</option><option>5</option></select></label>
+      <label>Max tries per model <select id="tries"><option>10</option><option selected>30</option><option>60</option></select></label>
+      <button class="primary" id="gen">Generate</button>
+      <button id="stop" disabled>Stop</button>
+    </div>
+    <div class="hint" id="runInfo" style="margin-top:8px"></div>
+    <div class="cols" id="cols"></div>
+  </div>
+</main>
+
+<script type="module">
+import { loadMeta, loadModel } from "./gpt.js";
+import { grade, halves } from "./matra.js";
+import { load as loadClassifier } from "../../clasifierLM/classifier/web/classifier.js";
+
+const MODELS = [
+  { name: "tags_5k", label: "tags_5k · 4,941 synthetic + real (best)" },
+  { name: "tags_2500", label: "tags_2500 · 2,500 synthetic + real" },
+  { name: "tags_5k_3m", label: "tags_5k_3m · 3.2M params, dropout 0.15" },
+  { name: "tags_5k_3m_d25", label: "tags_5k_3m_d25 · 3.2M params, dropout 0.25" },
+];
+const EXAMPLES = [
+  "a doha about pride and ego, using the image of a lamp",
+  "life is short like a drop of dew, death comes for everyone",
+  "speak sweetly like a cuckoo, harsh words hurt like a crow",
+  "a false guru who pretends, like a heron waiting for fish",
+  "love cannot be learned from books",
+  "patience: the tree gives fruit in its own season",
+  "god is inside you like the musk inside the deer",
+  "rituals and prayer beads are useless if the mind is impure",
+];
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
+let clf, meta, grams, stopFlag = false;      // meta: tag lists + vocabulary, the same for every model
+const loaded = new Map();                     // name -> { meta, model }
+
+// ---------- loading ----------
+async function getModel(name) {
+  if (!loaded.has(name)) {
+    const base = `models/${name}/`;
+    const m = await loadMeta(base);
+    loaded.set(name, { meta: m, model: await loadModel(base, "final", m) });
+  }
+  return loaded.get(name);
+}
+function statLine(m) {
+  const k = m.metrics;
+  return `${(m.n_params / 1e6).toFixed(1)}M params · dropout ${m.config.dropout} · val ${m.best.stage2.val.toFixed(3)} · ` +
+    `unfiltered exact ${(k.exact * 100).toFixed(0)}% / near ${(k.near * 100).toFixed(0)}% · image hit ${(k.image_hit * 100).toFixed(0)}%`;
+}
+async function buildModelList() {
+  for (const [i, m] of MODELS.entries()) {
+    const row = document.createElement("label"); row.className = "mrow";
+    row.innerHTML = `<input type="checkbox" value="${m.name}" ${i === 0 ? "checked" : ""}><b>${esc(m.label)}</b><span class="st" id="st_${m.name}">…</span>`;
+    $("models").append(row);
+  }
+  // stats need only meta.json (small); the weights load when a model is first used
+  await Promise.all(MODELS.map(async (m) => {
+    const mt = await loadMeta(`models/${m.name}/`);
+    $("st_" + m.name).textContent = statLine(mt);
+    if (!meta) meta = mt;
+  }));
+  grams = new Set();
+  for (const d of meta.real_dohe) {
+    const w = d.replace(/\n/g, " ").split(/\s+/);
+    for (let i = 0; i + 5 <= w.length; i++) grams.add(w.slice(i, i + 5).join(" "));
+  }
+  fillSelects();
+}
+const selected = () => [...document.querySelectorAll("#models input:checked")].map((x) => x.value);
+
+function fillSelects() {
+  const keep = { theme: $("theme").value, img1: $("img1").value, img2: $("img2").value, device: $("device").value };
+  $("theme").replaceChildren(new Option("(none)", ""), ...meta.themes.map((t) => new Option(`${t.name} (${t.id})`, t.id)));
+  for (const s of ["img1", "img2"]) $(s).replaceChildren(new Option("(none)", ""), ...meta.images.map((i) => new Option(`${i.name} (${i.id})`, i.id)));
+  $("device").replaceChildren(new Option("random", "random"), new Option("(none)", ""), ...meta.devices.map((d) => new Option(`${d.name} (${d.id})`, d.id)));
+  for (const [k, v] of Object.entries(keep)) if (v !== undefined && v !== "") $(k).value = v;
+}
+for (const s of ["theme", "img1", "img2", "device"]) $(s).onchange = updateTagline;
+
+for (const e of EXAMPLES) {
+  const b = document.createElement("button"); b.className = "chip"; b.textContent = e;
+  b.onclick = () => { $("req").value = e; match(); };
+  $("examples").append(b);
+}
+
+// ---------- step 2: classifier -> tags ----------
+function bar(label, p, sel, unknown) {
+  return `<div class="bar ${sel ? "sel" : ""} ${unknown ? "unknown" : ""}"><span>${esc(label)}</span>` +
+    `<span class="track"><span class="fill" style="width:${(p * 100).toFixed(1)}%"></span></span><span>${(p * 100).toFixed(0)}%</span></div>`;
+}
+
+function match() {
+  const text = $("req").value.trim();
+  if (!text || !clf || !meta) return;
+  const r = clf.predict(text);
+  const known = new Set(meta.themes.map((t) => t.id));
+  // theme: renormalize the classifier's 101-way softmax over the 10 themes the doha model was trained on
+  const sub = meta.themes.map((t) => [t.id, t.name, r.allThemeProbs[t.id] || 0]);
+  const tot = sub.reduce((a, x) => a + x[2], 0) || 1;
+  sub.sort((a, b) => b[2] - a[2]);
+  const theme = sub[0][0];
+  const raw = Object.entries(r.allThemeProbs).sort((a, b) => b[1] - a[1])[0];
+  let note = `Classifier's own top theme: <b>${esc(raw[0])}</b> (${(raw[1] * 100).toFixed(0)}% of all 101 classes).`;
+  if (!known.has(raw[0])) note += ` That theme isn't in the doha model's 10, so the nearest known one is used: <b>${esc(theme)}</b>.`;
+  if (raw[0] === "none") note = `The classifier found no clear theme ("none", ${(raw[1] * 100).toFixed(0)}%). Using the most likely of the model's 10: <b>${esc(theme)}</b>; change it if it's wrong.`;
+  $("clfNote").innerHTML = note;
+  $("themeBars").innerHTML = sub.map(([id, name, p]) => bar(`${name}`, p / tot, id === theme)).join("");
+
+  // images: the classifier's sigmoid scores; keep those >= its threshold that the model knows (max 2)
+  const knownImg = new Set(meta.images.map((i) => i.id));
+  const imgs = Object.entries(r.allImageProbs).sort((a, b) => b[1] - a[1]);
+  const t = clf.meta.thresholds.t_img;
+  const picked = imgs.filter(([id, p]) => p >= t && knownImg.has(id)).slice(0, 2).map(([id]) => id);
+  $("imgBars").innerHTML = imgs.slice(0, 8).map(([id, p]) => bar(id + (knownImg.has(id) ? "" : " (not in model)"), p, picked.includes(id), !knownImg.has(id))).join("") +
+    `<div class="hint">threshold ${t}: images at or above it are used</div>`;
+
+  $("theme").value = theme;
+  $("img1").value = picked[0] || "";
+  $("img2").value = picked[1] || "";
+  $("step2").hidden = false;
+  $("step3").hidden = false;
+  updateTagline();
+}
+$("go").onclick = match;
+$("req").addEventListener("keydown", (e) => { if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) match(); });
+
+function resolveTags() {                       // once per Generate click, shared by all models
+  let dev = $("device").value;
+  if (dev === "random") dev = meta.devices[Math.floor(Math.random() * meta.devices.length)].id;
+  const imgs = [...new Set([$("img1").value, $("img2").value].filter(Boolean))];
+  return { theme: $("theme").value, images: imgs, device: dev };
+}
+function tagTokens(t) {
+  return [...(t.theme ? [`<${t.theme}>`] : []), ...t.images.map((i) => `<${i}>`), ...(t.device ? [`<${t.device}>`] : [])];
+}
+function updateTagline() {
+  const t = { theme: $("theme").value, images: [...new Set([$("img1").value, $("img2").value].filter(Boolean))], device: $("device").value };
+  const dev = t.device === "random" ? "<random device>" : t.device ? `<${t.device}>` : "";
+  $("tagline").textContent = [...(t.theme ? [`<${t.theme}>`] : []), ...t.images.map((i) => `<${i}>`), dev].join("") + "|";
+}
+
+// ---------- step 3: generate and filter ----------
+$("temp").oninput = () => ($("tempV").textContent = (+$("temp").value).toFixed(2));
+const stoi = () => Object.fromEntries(meta.itos.map((s, i) => [s, i]));
+
+function hasImage(text, id) {
+  const words = new Set(text.match(/[ऀ-ॿ]+/g) || []);
+  return meta.images.find((i) => i.id === id).words.some((w) => words.has(w));
+}
+function copySpan(text) {
+  const w = text.replace(/\n/g, " ").split(/\s+/);
+  for (let i = 0; i + 5 <= w.length; i++) if (grams.has(w.slice(i, i + 5).join(" "))) return w.slice(i, i + 5).join(" ");
+  return null;
+}
+function halvesHtml(text) {
+  const h = halves(text);
+  if (!h) return "no 2-line shape";
+  const T = [13, 11, 13, 11];
+  const s = h.map(([lo, hi], k) => { const v = lo === hi ? `${lo}` : `${lo}-${hi}`; return lo <= T[k] && T[k] <= hi ? v : `<span class="off">${v}</span>`; });
+  return `${s[0]}+${s[1]} / ${s[2]}+${s[3]}`;
+}
+function candHtml(n, text, g, imgHits, copy) {
+  return `<span class="muted">#${n}</span><span class="t">${esc(text)}</span>` +
+    `<span class="m"><span class="badge ${g === "exact" ? "b-exact" : g === "near" ? "b-near" : "b-fail"}">${g || "fails meter"}</span> ` +
+    `${halvesHtml(text)} · ${imgHits.map(([i, h]) => (h ? "✓ " : "✗ ") + i).join(" ") || "no image tag"}${copy ? ` · <mark>copies “${esc(copy)}”</mark>` : ""}</span>`;
+}
+
+$("stop").onclick = () => (stopFlag = true);
+$("gen").onclick = async () => {
+  const names = selected();
+  if (!names.length) { $("runInfo").textContent = "Tick at least one model."; return; }
+  const temp = +$("temp").value, tries = +$("tries").value, accept = $("accept").value, want = +$("keep").value;
+  stopFlag = false;
+  $("gen").disabled = true; $("stop").disabled = false;
+  const tags = resolveTags();
+  const stoi = Object.fromEntries(meta.itos.map((x, i) => [x, i]));
+  const prompt = [stoi["\n"], stoi["\n"], ...tagTokens(tags).map((x) => stoi[x]), stoi["|"]];
+  $("runInfo").innerHTML = `Same prompt for every model: <code>${esc(tagTokens(tags).join(""))}|</code> · temperature ${temp.toFixed(2)} · ` +
+    `keep ${want} per model (${accept === "exact" ? "exact only" : "exact or near"}), at most ${tries} tries each`;
+
+  // one column per model; models take turns, one candidate each, so all columns fill at the same pace
+  $("cols").innerHTML = "";
+  const runs = [];
+  for (const name of names) {
+    const col = document.createElement("div"); col.className = "col";
+    col.innerHTML = `<h3>${esc(name)}</h3><div class="prog">loading weights…</div><div class="kept"></div>` +
+      `<details><summary>all candidates</summary><div class="all"></div></details>`;
+    $("cols").append(col);
+    runs.push({ name, col, n: 0, kept: 0, t: 0, done: false });
+  }
+  for (const r of runs) { r.m = await getModel(r.name); r.col.querySelector(".prog").textContent = "generating…"; }
+
+  while (!stopFlag && runs.some((r) => !r.done)) {
+    for (const r of runs) {
+      if (r.done || stopFlag) continue;
+      const t0 = performance.now();
+      const ids = r.m.model.generate(prompt, { maxNew: 160, temperature: temp, stopId: stoi["॥"] });
+      r.t += performance.now() - t0;
+      r.n++;
+      const text = ids.filter((i) => i < meta.first_tag).map((i) => meta.itos[i]).join("").trim();
+      const g = grade(text), copy = copySpan(text);
+      const imgHits = tags.images.map((i) => [i, hasImage(text, i)]);
+      const ok = !copy && (g === "exact" || (accept === "near" && g === "near"));
+      const row = document.createElement("div"); row.className = "cand";
+      row.innerHTML = candHtml(r.n, text, g, imgHits, copy);
+      r.col.querySelector(".all").prepend(row);
+      if (ok) {
+        r.kept++;
+        const k = document.createElement("div"); k.className = "keep";
+        k.innerHTML = `<div class="winner">${esc(text)}</div><div class="meta"><span class="badge ${g === "exact" ? "b-exact" : "b-near"}">${g}</span> ` +
+          `try #${r.n} · matras ${halvesHtml(text)} · ${imgHits.map(([i, h]) => (h ? "✓ " : "✗ ") + i).join(" ") || "no image tag"}</div>`;
+        r.col.querySelector(".kept").append(k);
+      }
+      if (r.kept >= want || r.n >= tries) r.done = true;
+      r.col.querySelector(".prog").textContent =
+        `${r.kept}/${want} kept · ${r.n} ${r.n === 1 ? "try" : "tries"} · ${(r.t / r.n / 1000).toFixed(2)} s/try` +
+        (r.done && r.kept < want ? " · stopped at max tries" : "") + (r.kept ? ` · pass rate ${(100 * r.kept / r.n).toFixed(0)}%` : "");
+      await new Promise((res) => setTimeout(res, 0));     // repaint between candidates
+    }
+  }
+  if (stopFlag) for (const r of runs) if (!r.done) r.col.querySelector(".prog").textContent += " · stopped";
+  $("gen").disabled = false; $("stop").disabled = true;
+};
+
+// ---------- start ----------
+try {
+  clf = await loadClassifier("../../clasifierLM/classifier/artifacts/classifier/");
+  $("clfStat").textContent = `Classifier: fastText-style, ${clf.meta.theme_ids.length} theme classes + ${clf.meta.image_ids.length} images, ` +
+    `exported ${clf.meta.exported} (from the other agent's clasifierLM/classifier/; read-only here).`;
+} catch (e) {
+  $("clfStat").innerHTML = `<span class="off">Could not load the classifier: ${esc(e.message)}</span>`;
+}
+await buildModelList();
+match();
+</script>
+</body>
+</html>

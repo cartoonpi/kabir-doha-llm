@@ -1,0 +1,6 @@
+serif-Regular.woff2, serif-SemiBold.woff2: Noto Serif Devanagari (Regular, SemiBold)
+Copyright 2015-2022 Google LLC. All Rights Reserved.
+Licensed under the SIL Open Font License, Version 1.1: https://openfontlicense.org
+Converted from TTF to WOFF2 without other changes.
+display-Medium.woff2: Noto Serif Display Medium, subset to Latin-1 + punctuation
+Copyright 2022 Google LLC. SIL Open Font License, Version 1.1.

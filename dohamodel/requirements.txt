@@ -1,0 +1,6 @@
+torch==2.14.1
+numpy==2.5.4
+PyYAML==6.0.3
+# only for build_site.py font subsetting (optional)
+fonttools==4.68.0
+brotli==1.2.1

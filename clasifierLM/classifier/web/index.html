@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Doha Tag Classifier</title>
+<!--
+  Test page for web/classifier.js. Serve the classifier/ folder over HTTP
+  (browsers block fetch() from file:// URLs):
+      cd classifier && python -m http.server 8000
+  then open http://localhost:8000/web/
+-->
+<style>
+  :root {
+    --bg: #f7f5f0; --card: #ffffff; --text: #1f1d1a; --muted: #6b665d; --line: #e4e0d6;
+    --accent: #b5532a; --accent-soft: #f3e3d9; --bar: #c9a27e; --bar-top: #b5532a; --none: #7a7a7a;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #161513; --card: #201e1b; --text: #ece8e1; --muted: #a39d92; --line: #35322d;
+      --accent: #e58a5c; --accent-soft: #3a2a20; --bar: #7d6450; --bar-top: #e58a5c; --none: #9a9a9a;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+         font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 760px; margin: 0 auto; padding: 32px 16px 64px; }
+  h1 { font-size: 1.6rem; margin: 0 0 4px; }
+  .sub { color: var(--muted); margin: 0 0 24px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 20px; margin-bottom: 16px; }
+  textarea { width: 100%; min-height: 84px; resize: vertical; padding: 12px; font: inherit; color: var(--text);
+             background: var(--bg); border: 1px solid var(--line); border-radius: 8px; }
+  textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 12px; }
+  .hint { color: var(--muted); font-size: .85rem; }
+  .chip { border: 1px solid var(--line); background: var(--bg); color: var(--text); border-radius: 999px;
+          padding: 4px 12px; font: inherit; font-size: .85rem; cursor: pointer; }
+  .chip:hover { border-color: var(--accent); }
+  .result-head { display: flex; flex-wrap: wrap; gap: 24px; align-items: baseline; }
+  .label { color: var(--muted); font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; }
+  .theme { font-size: 1.8rem; font-weight: 650; color: var(--accent); }
+  .theme.none { color: var(--none); }
+  .pill { display: inline-block; background: var(--accent-soft); border-radius: 999px; padding: 2px 12px; margin: 4px 6px 0 0; }
+  .bars { margin-top: 16px; display: grid; grid-template-columns: minmax(70px, auto) 1fr 48px; gap: 6px 10px; align-items: center; font-size: .9rem; }
+  .track { position: relative; height: 14px; background: var(--bg); border-radius: 4px; overflow: hidden; }
+  .fill { height: 100%; background: var(--bar); border-radius: 4px; transition: width .15s; }
+  .fill.top { background: var(--bar-top); }
+  .thresh { position: absolute; top: -2px; bottom: -2px; width: 2px; background: var(--text); opacity: .45; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; color: var(--muted); }
+  .meta { color: var(--muted); font-size: .8rem; margin-top: 16px; word-break: break-word; }
+  .err { color: #c0392b; }
+  h2 { font-size: 1rem; margin: 20px 0 0; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Doha tag classifier</h1>
+  <p class="sub">Type an English request. The fastText-style model (trained from scratch, running entirely in your browser) predicts a theme and up to two images.</p>
+
+  <div class="card">
+    <textarea id="input" placeholder="e.g. something about how life slowly runs out, use a lamp" autofocus></textarea>
+    <div class="row">
+      <span class="hint">Predicts as you type. Try:</span>
+    </div>
+    <div class="row" id="examples"></div>
+  </div>
+
+  <div class="card" id="result" hidden>
+    <div class="result-head">
+      <div><div class="label">Theme</div><div class="theme" id="theme"></div></div>
+      <div><div class="label">Images</div><div id="images"></div></div>
+    </div>
+    <h2>Top theme probabilities</h2>
+    <div class="bars" id="themeBars"></div>
+    <h2>Top image probabilities</h2>
+    <div class="bars" id="imageBars"></div>
+    <div class="meta" id="debug"></div>
+  </div>
+
+  <div class="card meta" id="status">Loading model…</div>
+</main>
+
+<script type="module">
+import { load, pieces } from "./classifier.js";
+
+const EXAMPLES = [
+  "something about how life slowly runs out, use a lamp",
+  "my boss thinks he knows everything",
+  "people chant all day but treat their servants badly",
+  "a moth flying into the flame",
+  "who won the cricket match",
+  "sweet words like sandalwood",
+  "my grandfather's last days",
+  "make a panini",
+];
+
+const $ = (id) => document.getElementById(id);
+const pct = (p) => (p * 100).toFixed(1) + "%";
+
+const TOP_BARS = 10; // with 100 themes/images, show only the most likely ones
+
+function bars(el, probs, threshold, highlight) {
+  el.replaceChildren();
+  for (const [id, p] of Object.entries(probs).sort((a, b) => b[1] - a[1]).slice(0, TOP_BARS)) {
+    const name = document.createElement("div"); name.textContent = id;
+    const track = document.createElement("div"); track.className = "track";
+    const fill = document.createElement("div"); fill.className = "fill" + (highlight(id) ? " top" : "");
+    fill.style.width = (p * 100) + "%";
+    const t = document.createElement("div"); t.className = "thresh"; t.style.left = (threshold * 100) + "%";
+    t.title = "threshold " + threshold;
+    track.append(fill, t);
+    const num = document.createElement("div"); num.className = "num"; num.textContent = pct(p);
+    el.append(name, track, num);
+  }
+}
+
+let clf;
+function run() {
+  const text = $("input").value;
+  if (!clf) return;
+  if (!text.trim()) { $("result").hidden = true; return; }
+  const t0 = performance.now();
+  const r = clf.predict(text);
+  const ms = performance.now() - t0;
+  const { t_theme, t_img } = clf.meta.thresholds;
+
+  $("result").hidden = false;
+  $("theme").textContent = `${r.theme} (${pct(r.themeProb)})`;
+  $("theme").className = "theme" + (r.theme === "none" ? " none" : "");
+  $("images").replaceChildren(...(r.images.length ? r.images.map((im) => {
+    const s = document.createElement("span"); s.className = "pill"; s.textContent = `${im.id} ${pct(im.prob)}`; return s;
+  }) : [Object.assign(document.createElement("span"), { textContent: "—" })]));
+  bars($("themeBars"), r.allThemeProbs, t_theme, (id) => id === r.theme);
+  bars($("imageBars"), r.allImageProbs, t_img, (id) => r.images.some((im) => im.id === id));
+
+  const ps = pieces(text);
+  $("debug").textContent = `${r.nPieces} pieces → bucket ids, averaged into one ${clf.meta.d}-number vector · ${ms.toFixed(2)} ms · ` +
+    `thresholds: theme ${t_theme}, image ${t_img} (vertical lines) · first pieces: ${ps.slice(0, 12).join(" ")}${ps.length > 12 ? " …" : ""}`;
+}
+
+for (const ex of EXAMPLES) {
+  const b = document.createElement("button");
+  b.className = "chip"; b.textContent = ex;
+  b.onclick = () => { $("input").value = ex; run(); };
+  $("examples").append(b);
+}
+$("input").addEventListener("input", run);
+
+try {
+  clf = await load("../artifacts/classifier/");
+  const m = clf.meta;
+  $("status").textContent = `Model loaded: B=${m.B}, d=${m.d}, ${m.theme_ids.length} theme classes, ${m.image_ids.length} images, exported ${m.exported}.`;
+  run();
+} catch (e) {
+  $("status").innerHTML = `<span class="err">Could not load the model: ${e.message}.</span> Serve the classifier/ folder over HTTP: <code>python -m http.server 8000</code>, then open <code>http://localhost:8000/web/</code>`;
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+parameters: 62,304   train chars: 3,493   parameters per train char: 18
+step    0   train 4.149   val 4.158   (ln 63 = 4.143)
+step  100   train 2.795   val 2.832   best val 2.832@100   15s
+step  200   train 2.422   val 2.644   best val 2.644@200   29s
+step  300   train 2.287   val 2.660   best val 2.642@250   43s
+step  400   train 2.183   val 2.678   best val 2.642@250   57s
+step  500   train 2.080   val 2.683   best val 2.642@250   71s
+step  600   train 1.993   val 2.709   best val 2.642@250   85s
+step  700   train 1.900   val 2.722   best val 2.642@250   99s
+step  800   train 1.821   val 2.746   best val 2.642@250   114s
+step  900   train 1.748   val 2.782   best val 2.642@250   128s
+step 1000   train 1.705   val 2.818   best val 2.642@250   143s
+step 1100   train 1.659   val 2.836   best val 2.642@250   157s
+step 1200   train 1.625   val 2.841   best val 2.642@250   171s
+step 1300   train 1.603   val 2.861   best val 2.642@250   184s
+step 1400   train 1.587   val 2.876   best val 2.642@250   197s
+step 1500   train 1.572   val 2.879   best val 2.642@250   211s
+
+best val 2.642 at step 250   (bigram best val: 2.736)
+
+[final model] prompt 'बुरा जो देखन' (a TRAIN doha):
+  बुरा जो देखन कोय। / सबुख सुख सा कुख सुख को कुख भीख न सुख नान भख मृत॥
+  बुरा जो देखन पर कारे, जो कोय। / करे लरे में सो जोय। / आकरे दो करया, मुख की सो को कोय। / सहें सुरन सुछ सोयासुख सुख न आश
+  बुरा जो देखन परी, को सबारि भलाय॥
+[final model] prompt from a blank line (free writing):
+   /  / कल गुंडिखड़े मि बहैं, न्याहिय॥
+   /  / जले पन बी हनाँ पर अते, पर काँ प॥
+   / ता ति पूपरे, रु में गो जोय। / आगतो दो करा को करि अहै, का को दि हाहैस॥
+
+[best-val model] prompt 'बुरा जो देखन' (a TRAIN doha):
+  बुरा जो देखन को गुं अखोय। / मस कुर हि न जा य॥
+  बुरा जो देखन जारे न र। / तन सी पी ते बेर काचाय॥
+  बुरा जो देखन स॥
+[best-val model] prompt from a blank line (free writing):
+   / काल गुं अखोये मे कुर हि न जा य॥
+   / दी आँ हीर। / हन सी पी ते बेर काँ काएग॥
+   / तै पौं दवलै, मेंग मे का मन॥
