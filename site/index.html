@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Kabir Doha Generator</title>
+<meta name="author" content="Piyush Hatwalne">
 <meta name="description" content="Describe a thought in English and get a new doha in the style of Kabir. Runs entirely in your browser.">
 <meta name="theme-color" content="#1f3a6b">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
@@ -127,6 +128,15 @@
   #past h2 { font: 600 .9rem var(--sans); color: var(--muted); margin: 0 0 4px; text-align: center; letter-spacing: .08em; text-transform: uppercase; }
   #past .p { font-family: var(--serif); text-align: center; border-top: 1px dashed var(--rule); padding: 12px 2px; line-height: 1.9; }
   footer { margin-top: 26px; text-align: center; color: var(--muted); font-size: .8rem; }
+  .maker { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--rule); font-size: .9rem; color: var(--ink); }
+  .maker .by { font-family: var(--display); font-size: 1.05rem; }
+  .maker .by a { color: var(--vermilion); text-decoration: none; border-bottom: 1px solid var(--gold-soft); }
+  .maker .joke { color: var(--muted); font-size: .82rem; font-style: italic; margin-top: 2px; }
+  .social { display: flex; justify-content: center; gap: 10px; margin-top: 12px; }
+  .social a { display: inline-flex; align-items: center; gap: 6px; color: var(--ink); text-decoration: none; font-size: .82rem;
+    border: 1px solid var(--gold); border-radius: 999px; padding: 6px 12px; }
+  .social a:hover, .maker .by a:hover { color: var(--vermilion); border-color: var(--vermilion); }
+  .social svg { width: 15px; height: 15px; fill: currentColor; }
 
   /* ---------- "How it works" overlay ---------- */
   dialog { border: 0; padding: 0; overflow: visible; background: transparent; color: var(--ink); width: min(560px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); }
@@ -208,7 +218,17 @@
     <section id="past" hidden><h2>Earlier</h2><div id="pastList"></div></section>
 
     <footer>Written by a small AI model trained on Kabir's dohe. These are new verses, not Kabir's own words.<br>
-      Everything runs on your device; nothing you type is sent anywhere.</footer>
+      Everything runs on your device; nothing you type is sent anywhere.
+      <div class="maker">
+        <div class="by">Made by <a href="https://x.com/cartoonpi" rel="me noopener" target="_blank">Piyush Hatwalne</a></div>
+        <div class="joke">who has not read a single doha. The model read 6,672 of them instead.</div>
+        <nav class="social" aria-label="Creator links">
+          <a href="https://github.com/cartoonpi/kabir-doha-llm" rel="noopener" target="_blank"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0a8 8 0 0 0-2.53 15.59c.4.07.55-.17.55-.38v-1.33c-2.23.48-2.7-1.07-2.7-1.07-.36-.92-.89-1.17-.89-1.17-.73-.5.06-.49.06-.49.8.06 1.23.83 1.23.83.71 1.22 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.65-.89-3.65-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8 8 0 0 0 8 0z"/></svg>Source</a>
+          <a href="https://www.linkedin.com/in/piyushhatwalne/" rel="me noopener" target="_blank"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13.6 0H2.4A2.4 2.4 0 0 0 0 2.4v11.2A2.4 2.4 0 0 0 2.4 16h11.2a2.4 2.4 0 0 0 2.4-2.4V2.4A2.4 2.4 0 0 0 13.6 0zM4.9 13.3H2.7V6h2.2v7.3zM3.8 5a1.3 1.3 0 1 1 0-2.6 1.3 1.3 0 0 1 0 2.6zm9.5 8.3h-2.2V9.8c0-.9 0-2-1.2-2s-1.4.9-1.4 1.9v3.6H6.3V6h2.1v1h.1c.3-.6 1-1.2 2.1-1.2 2.3 0 2.7 1.5 2.7 3.4v4.1z"/></svg>LinkedIn</a>
+          <a href="https://x.com/cartoonpi" rel="me noopener" target="_blank"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M12.2 1h2.3L9.5 6.8 15.4 15h-4.6L7.2 10.3 3 15H.7l5.4-6.2L.4 1h4.7l3.3 4.3L12.2 1zm-.8 12.6h1.3L4.6 2.3H3.2l8.2 11.3z"/></svg>@cartoonpi</a>
+        </nav>
+      </div>
+    </footer>
   </div>
   <div class="band" aria-hidden="true"></div>
 </div>

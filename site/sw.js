@@ -1,6 +1,6 @@
 // Offline support: after the first visit, the page and both models load from the device.
 // VERSION is stamped by dohamodel/build_site.py; a new version replaces the old cache.
-const VERSION = "e32ce875ad";
+const VERSION = "83ecb2fc99";
 const FILES = ["./", "index.html", "app.js", "worker.js", "lib/load.js", "lib/writer.js", "lib/gpt.js", "lib/matra.js",
   "lib/classifier.js", "models/doha.json", "models/doha.bin", "models/classifier.json", "models/classifier.bin",
   "fonts/serif-Regular.woff2", "fonts/serif-SemiBold.woff2", "fonts/display-Medium.woff2", "manifest.webmanifest", "icon.svg", "icon-192.png", "icon-512.png"];
